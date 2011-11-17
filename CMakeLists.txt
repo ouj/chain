@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # main project name defined
-project(king)
+project(angryman)
 
 # osx architectures
 if(NOT BUILD_NEWGCC)
@@ -26,11 +26,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${BIN_DIR_SUFFIX})
 
 #include directories
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/src/common)
+include_directories(${PROJECT_SOURCE_DIR}/openni/include)
 include_directories(/homebrew/include)
 include_directories(/usr/local/include)
 
 #library directories
+link_directories(${PROJECT_SOURCE_DIR}/openni/lib)
 link_directories(/homebrew/lib)
 link_directories(/usr/local/lib)
 
