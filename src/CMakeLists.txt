@@ -4,12 +4,16 @@ main.cpp
 
 set(RESOURCE
 icon.icns
-${KINECT_DEP}/lib/libOpenNI.dylib
 )
 
-SOURCE_GROUP("Resources" FILES ${RESOURCE})
+set(DYLIB
+${KINECT_DEP}/lib/libOpenNI.dylib
+${KINECT_DEP}/lib/libusb-1.0.0.dylib
+)
 
-add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE})
+SOURCE_GROUP("Resources" FILES ${RESOURCE} ${DYLIB})
+
+add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB})
 target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} libOpenNI.dylib)
 
 SET( MACOSX_BUNDLE_INFO_STRING "Jiawei's Viewer")
@@ -21,4 +25,4 @@ SET( MACOSX_BUNDLE_COPYRIGHT "Jiawei Ou allright reserved..")
 
 SET_SOURCE_FILES_PROPERTIES(icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
-SET_SOURCE_FILES_PROPERTIES(${KINECT_DEP}/lib/libOpenNI.dylib PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)
+SET_SOURCE_FILES_PROPERTIES(${DYLIB} PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)

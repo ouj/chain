@@ -10,5 +10,6 @@
 xn::Context context;
 
 int main(int argc, char** argv) {
+    printf("finish");
     return 0;
 }
