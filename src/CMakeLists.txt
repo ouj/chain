@@ -1,10 +1,14 @@
 set(SOURCE
 main.cpp
+)
+
+set(RESOURCE
 icon.icns
 )
 
-add_executable(angryman MACOSX_BUNDLE ${SOURCE})
-target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES})
+
+add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE})
+target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} libOpenNI.dylib)
 
 if(APPLE)
 	SET( MACOSX_BUNDLE_INFO_STRING "Jiawei's Viewer")

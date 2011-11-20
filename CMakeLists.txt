@@ -26,19 +26,19 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${BIN_DIR_SUFFIX})
 
 #include directories
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/openni/include)
+include_directories(${PROJECT_SOURCE_DIR}/kinect/include)
+include_directories(${PROJECT_SOURCE_DIR}/kinect/include/openni)
 include_directories(/homebrew/include)
 include_directories(/usr/local/include)
 
 #library directories
-link_directories(${PROJECT_SOURCE_DIR}/openni/lib)
+link_directories(${PROJECT_SOURCE_DIR}/kinect/lib)
 link_directories(/homebrew/lib)
 link_directories(/usr/local/lib)
 
 # libraries
 find_package(GLUT)
 find_package(OpenGL)
-
 
 
 if(WIN32)
