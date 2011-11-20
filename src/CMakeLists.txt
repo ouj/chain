@@ -4,8 +4,10 @@ main.cpp
 
 set(RESOURCE
 icon.icns
+${KINECT_DEP}/lib/libOpenNI.dylib
 )
 
+SOURCE_GROUP("Resources" FILES ${RESOURCE})
 
 add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE})
 target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} libOpenNI.dylib)
@@ -19,4 +21,4 @@ SET( MACOSX_BUNDLE_COPYRIGHT "Jiawei Ou allright reserved..")
 
 SET_SOURCE_FILES_PROPERTIES(icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
-INSTALL(DIRECTORY ${KINECT_DEP}/lib/ DESTINATION angryman.app/Contents/Frameworks)
+SET_SOURCE_FILES_PROPERTIES(${KINECT_DEP}/lib/libOpenNI.dylib PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)
