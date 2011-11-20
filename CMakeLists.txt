@@ -40,6 +40,7 @@ link_directories(/usr/local/lib)
 find_package(GLUT)
 find_package(OpenGL)
 
+GET_FILENAME_COMPONENT(KINECT_DEP ${PROJECT_SOURCE_DIR}/kinect ABSOLUTE)
 
 if(WIN32)
     GET_FILENAME_COMPONENT(GL_PATH ../OpenGL ABSOLUTE)

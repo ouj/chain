@@ -1,0 +1,888 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		1078D77F01078D77F01078D7 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1078D95301078D95301078D9 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				1078D7BD01078D7BD01078D7 /* CMake ReRun */,
+				1078D89101078D89101078D8 /* CMake Rules */,
+			);
+			dependencies = (
+				7FD69B4136607FD69B413660 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		1078E83D01078E83D01078E8 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1078EA0F01078EA0F01078EA /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				1078E86E01078E86E01078E8 /* CMake ReRun */,
+				1078E94001078E94001078E9 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				7FD69B4144F07FD69B4144F0 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		1078F83101078F83101078F8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1078F77401078F77401078F7 /* main.cpp */; settings = {COMPILER_FLAGS = ""; }; };
+		1078F94C01078F94C01078F9 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1078F89101078F89101078F8 /* icon.icns */; settings = {COMPILER_FLAGS = ""; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7FD69B412E207FD69B412E20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1078D02101078D02101078D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FD69B4022907FD69B402290;
+			remoteInfo = angryman;
+		};
+		7FD69B413EB07FD69B413EB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1078D02101078D02101078D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1078D77F01078D77F01078D7;
+			remoteInfo = ALL_BUILD;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1078E6BE01078E6BE01078E6 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1078F77401078F77401078F7 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
+		1078F89101078F89101078F8 /* icon.icns */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode; name = icon.icns; path = src/icon.icns; sourceTree = SOURCE_ROOT; };
+		1078F9A901078F9A901078F9 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.text; name = CMakeLists.txt; path = src/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1078FAC601078FAC601078FA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.text.plist; name = Info.plist; path = obj/xcode/src/CMakeFiles/angryman.dir/Info.plist; sourceTree = SOURCE_ROOT; };
+		7FD69B4122107FD69B412210 /* angryman.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = angryman.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		107898DC0107898DC0107898 = {
+			isa = PBXGroup;
+			children = (
+				1078C8D801078C8D801078C8 /* Sources */,
+				1078C93E01078C93E01078C9 /* Resources */,
+				1078C9A501078C9A501078C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1078BD1301078BD1301078BD /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				1078BDA601078BDA601078BD /* CMake Rules */,
+				1078E6BE01078E6BE01078E6 /* CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		1078BDA601078BDA601078BD /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		1078C8D801078C8D801078C8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				1078BD1301078BD1301078BD /* ALL_BUILD */,
+				1078CE7101078CE7101078CE /* angryman */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		1078C93E01078C93E01078C9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1078F89101078F89101078F8 /* icon.icns */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1078C9A501078C9A501078C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7FD69B4122107FD69B412210 /* angryman.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1078CE7101078CE7101078CE /* angryman */ = {
+			isa = PBXGroup;
+			children = (
+				1078CED801078CED801078CE /* Source Files */,
+				1078CF7201078CF7201078CF /* Resources */,
+				1078F89101078F89101078F8 /* icon.icns */,
+				1078F9A901078F9A901078F9 /* CMakeLists.txt */,
+			);
+			name = angryman;
+			sourceTree = "<group>";
+		};
+		1078CED801078CED801078CE /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				1078F77401078F77401078F7 /* main.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		1078CF7201078CF7201078CF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1078FAC601078FAC601078FA /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7FD69B4022907FD69B402290 /* angryman */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FD69B4028C07FD69B4028C0 /* Build configuration list for PBXNativeTarget "angryman" */;
+			buildPhases = (
+				7FD69B400D107FD69B400D10 /* CMake ReRun */,
+				7FD69B4003F07FD69B4003F0 /* Resources */,
+				1078FBE201078FBE201078FB /* Sources */,
+				7FD69B4019807FD69B401980 /* CMake PostBuild Rules */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = angryman;
+			productName = angryman;
+			productReference = 7FD69B4122107FD69B412210 /* angryman.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1078D02101078D02101078D0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0410;
+			};
+			buildConfigurationList = 1078D4E601078D4E601078D4 /* Build configuration list for PBXProject "angryman" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 107898DC0107898DC0107898;
+			projectDirPath = ../..;
+			projectRoot = "";
+			targets = (
+				1078D77F01078D77F01078D7 /* ALL_BUILD */,
+				1078E83D01078E83D01078E8 /* install */,
+				7FD69B4022907FD69B402290 /* angryman */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7FD69B4003F07FD69B4003F0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1078F94C01078F94C01078F9 /* icon.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1078D7BD01078D7BD01078D7 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode -f /Users/ouj/git/angryman/obj/xcode/CMakeScripts/ReRunCMake.make";
+		};
+		1078D89101078D89101078D8 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode -f /Users/ouj/git/angryman/obj/xcode/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+		};
+		1078E86E01078E86E01078E8 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode -f /Users/ouj/git/angryman/obj/xcode/CMakeScripts/ReRunCMake.make";
+		};
+		1078E94001078E94001078E9 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode -f /Users/ouj/git/angryman/obj/xcode/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
+		};
+		7FD69B400D107FD69B400D10 /* CMake ReRun */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake ReRun";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode -f /Users/ouj/git/angryman/obj/xcode/CMakeScripts/ReRunCMake.make";
+		};
+		7FD69B4019807FD69B401980 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/ouj/git/angryman/obj/xcode/src -f /Users/ouj/git/angryman/obj/xcode/src/CMakeScripts/angryman_postBuildPhase.make$CONFIGURATION all";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1078FBE201078FBE201078FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1078F83101078F83101078F8 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7FD69B4136607FD69B413660 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FD69B4022907FD69B402290 /* angryman */;
+			targetProxy = 7FD69B412E207FD69B412E20 /* PBXContainerItemProxy */;
+		};
+		7FD69B4144F07FD69B4144F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1078D77F01078D77F01078D7 /* ALL_BUILD */;
+			targetProxy = 7FD69B413EB07FD69B413EB0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1078D4FD01078D4FD01078D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				SDKROOT = /Developer/SDKs/MacOSX10.7.sdk;
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/build;
+			};
+			name = Debug;
+		};
+		1078D52201078D52201078D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				SDKROOT = /Developer/SDKs/MacOSX10.7.sdk;
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/build;
+			};
+			name = Release;
+		};
+		1078D55401078D55401078D5 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				SDKROOT = /Developer/SDKs/MacOSX10.7.sdk;
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/build;
+			};
+			name = MinSizeRel;
+		};
+		1078D58901078D58901078D5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				SDKROOT = /Developer/SDKs/MacOSX10.7.sdk;
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/build;
+			};
+			name = RelWithDebInfo;
+		};
+		1078D9A601078D9A601078D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1078DCD001078DCD001078DC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		1078DFF601078DFF601078DF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1078E32001078E32001078E3 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		1078EA5F01078EA5F01078EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		1078ED8601078ED8601078ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		1078F0AA01078F0AA01078F0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1078F3D801078F3D801078F3 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		7FD69B402E707FD69B402E70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				CONFIGURATION_BUILD_DIR = /Users/ouj/git/angryman/bin/Debug;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INFOPLIST_FILE = /Users/ouj/git/angryman/obj/xcode/src/CMakeFiles/angryman.dir/Info.plist;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/ouj/git/angryman/kinect/lib/$(CONFIGURATION)",
+					/Users/ouj/git/angryman/kinect/lib,
+					"/homebrew/lib/$(CONFIGURATION)",
+					/homebrew/lib,
+					"/usr/local/lib/$(CONFIGURATION)",
+					/usr/local/lib,
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					OpenGL,
+					"-framework",
+					GLUT,
+					"-framework",
+					Cocoa,
+					"-lOpenNI",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = angryman;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Debug;
+		};
+		7FD69B406A707FD69B406A70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				CONFIGURATION_BUILD_DIR = /Users/ouj/git/angryman/bin/Release;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INFOPLIST_FILE = /Users/ouj/git/angryman/obj/xcode/src/CMakeFiles/angryman.dir/Info.plist;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/ouj/git/angryman/kinect/lib/$(CONFIGURATION)",
+					/Users/ouj/git/angryman/kinect/lib,
+					"/homebrew/lib/$(CONFIGURATION)",
+					/homebrew/lib,
+					"/usr/local/lib/$(CONFIGURATION)",
+					/usr/local/lib,
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					OpenGL,
+					"-framework",
+					GLUT,
+					"-framework",
+					Cocoa,
+					"-lOpenNI",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = angryman;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Release;
+		};
+		7FD69B40A5E07FD69B40A5E0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				CONFIGURATION_BUILD_DIR = /Users/ouj/git/angryman/bin/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INFOPLIST_FILE = /Users/ouj/git/angryman/obj/xcode/src/CMakeFiles/angryman.dir/Info.plist;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/ouj/git/angryman/kinect/lib/$(CONFIGURATION)",
+					/Users/ouj/git/angryman/kinect/lib,
+					"/homebrew/lib/$(CONFIGURATION)",
+					/homebrew/lib,
+					"/usr/local/lib/$(CONFIGURATION)",
+					/usr/local/lib,
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-DNDEBUG",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					OpenGL,
+					"-framework",
+					GLUT,
+					"-framework",
+					Cocoa,
+					"-lOpenNI",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = angryman;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = MinSizeRel;
+		};
+		7FD69B40E0D07FD69B40E0D0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				CONFIGURATION_BUILD_DIR = /Users/ouj/git/angryman/bin/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/ouj/git/angryman/src,
+					/Users/ouj/git/angryman/kinect/include,
+					/Users/ouj/git/angryman/kinect/include/openni,
+					/homebrew/include,
+					/usr/local/include,
+				);
+				INFOPLIST_FILE = /Users/ouj/git/angryman/obj/xcode/src/CMakeFiles/angryman.dir/Info.plist;
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/ouj/git/angryman/kinect/lib/$(CONFIGURATION)",
+					/Users/ouj/git/angryman/kinect/lib,
+					"/homebrew/lib/$(CONFIGURATION)",
+					/homebrew/lib,
+					"/usr/local/lib/$(CONFIGURATION)",
+					/usr/local/lib,
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					"-framework",
+					OpenGL,
+					"-framework",
+					GLUT,
+					"-framework",
+					Cocoa,
+					"-lOpenNI",
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = angryman;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/ouj/git/angryman/obj/xcode/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1078D4E601078D4E601078D4 /* Build configuration list for PBXProject "angryman" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1078D4FD01078D4FD01078D4 /* Debug */,
+				1078D52201078D52201078D5 /* Release */,
+				1078D55401078D55401078D5 /* MinSizeRel */,
+				1078D58901078D58901078D5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1078D95301078D95301078D9 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1078D9A601078D9A601078D9 /* Debug */,
+				1078DCD001078DCD001078DC /* Release */,
+				1078DFF601078DFF601078DF /* MinSizeRel */,
+				1078E32001078E32001078E3 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1078EA0F01078EA0F01078EA /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1078EA5F01078EA5F01078EA /* Debug */,
+				1078ED8601078ED8601078ED /* Release */,
+				1078F0AA01078F0AA01078F0 /* MinSizeRel */,
+				1078F3D801078F3D801078F3 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7FD69B4028C07FD69B4028C0 /* Build configuration list for PBXNativeTarget "angryman" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FD69B402E707FD69B402E70 /* Debug */,
+				7FD69B406A707FD69B406A70 /* Release */,
+				7FD69B40A5E07FD69B40A5E0 /* MinSizeRel */,
+				7FD69B40E0D07FD69B40E0D0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1078D02101078D02101078D0 /* Project object */;
+}
