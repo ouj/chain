@@ -1,2 +1,0 @@
-/Users/ouj/git/angryman/obj/xcode/CMakeFiles/ALL_BUILD.dir
-/Users/ouj/git/angryman/obj/xcode/src/CMakeFiles/angryman.dir
