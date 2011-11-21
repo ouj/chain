@@ -1,4 +1,5 @@
 set(SOURCE
+debug.h
 main.cpp
 )
 
