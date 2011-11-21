@@ -6,6 +6,7 @@
 #include <GLUT/GLUT.h>
 #endif // WIN32
 #include <XnCppWrapper.h>
+#include <XnVNite.h>
 
 #include "debug.h"
 

@@ -8,8 +8,17 @@ icon.icns
 )
 
 set(DYLIB
-${KINECT_DEP}/lib/libOpenNI.dylib
 ${KINECT_DEP}/lib/libusb-1.0.0.dylib
+${KINECT_DEP}/lib/libOpenNI.dylib
+${KINECT_DEP}/lib/libXnCore.dylib
+${KINECT_DEP}/lib/libXnDDK.dylib
+${KINECT_DEP}/lib/libXnDeviceFile.dylib
+${KINECT_DEP}/lib/libXnDeviceSensorV2KM.dylib
+${KINECT_DEP}/lib/libXnFormats.dylib
+${KINECT_DEP}/lib/libXnVCNITE_1_4_1.dylib
+${KINECT_DEP}/lib/libXnVFeatures_1_4_1.dylib
+${KINECT_DEP}/lib/libXnVHandGenerator_1_4_1.dylib
+${KINECT_DEP}/lib/libXnVNite_1_4_1.dylib
 )
 
 SOURCE_GROUP("Resources" FILES ${RESOURCE} ${DYLIB})
