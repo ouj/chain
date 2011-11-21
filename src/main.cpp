@@ -16,13 +16,13 @@ int main(int argc, char** argv) {
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
     
-    xn::DepthGenerator depth;
-    ret = depth.Create(context);
-    if(!error_if_not(ret == XN_STATUS_OK, "failed to create depth node"))
-        return -1;
-    
-    
+//    xn::DepthGenerator depth;
+//    ret = depth.Create(context);
+//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create depth node"))
+//        return -1;
+//    
     
     context.Shutdown();
+    message("finish");
     return 0;
 }
