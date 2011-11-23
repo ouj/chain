@@ -12,6 +12,43 @@
 #include <Box2D/Box2D.h>
 
 xn::Context context;
+xn::UserGenerator userGenerator;
+#define POSE_TO_USE "Psi"
+
+void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator,
+                                   XnUserID nId, void* pCookie) {
+    message_va("New User: %d", nId); 
+    userGenerator.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
+}
+
+
+void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId,
+                                    void* pCookie) { }
+
+void XN_CALLBACK_TYPE Pose_Detected(xn::PoseDetectionCapability& pose, 
+                                    const XnChar* strPose, XnUserID nId, 
+                                    void* pCookie) {
+    message_va("Pose %s for user %d", strPose, nId); 
+    userGenerator.GetPoseDetectionCap().StopPoseDetection(nId); 
+    userGenerator.GetSkeletonCap().RequestCalibration(nId, TRUE);
+}
+
+void XN_CALLBACK_TYPE Calibration_Start(xn::SkeletonCapability& capability, XnUserID nId,
+                                        void* pCookie) {
+    message_va("Starting calibration for user %d", nId);
+}
+
+void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUserID nId, 
+                                      XnBool bSuccess, void* pCookie) {
+    if (bSuccess) {
+        message("User calibrated");
+        userGenerator.GetSkeletonCap().StartTracking(nId); 
+    } else {
+        message_va("Failed to calibrate user %d", nId);
+        userGenerator.GetPoseDetectionCap().StartPoseDetection( POSE_TO_USE,
+                                                                 nId);
+    }
+}
 
 int main(int argc, char** argv) {
     XnStatus ret = context.Init();
@@ -24,11 +61,13 @@ int main(int argc, char** argv) {
 //        return -1;
 //    
     
-    xn::ImageGenerator image;
-    ret = image.Create(context);
-    if(!error_if_not(ret == XN_STATUS_OK, "failed to create image node"))
+//    xn::ImageGenerator image;
+//    ret = image.Create(context);
+//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create image node"))
+//        return -1;
+    ret = userGenerator.Create(context);
+    if(!error_if_not(ret == XN_STATUS_OK, "failed to create user node"))
         return -1;
-    
     
     context.Shutdown();
     message("finish");

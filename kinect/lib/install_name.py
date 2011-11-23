@@ -12,4 +12,6 @@ for f in lib_files:
         #p2 = subprocess.Popen(['grep', f], stdin=p1.stdout)
         
         subprocess.call(['install_name_tool', '-change', '../../Bin/Release/'+f,'@executable_path/../Frameworks/'+f, fl])
+        
+        subprocess.call(['install_name_tool', '-change', '@executable/../Frameworks/'+f,'@executable_path/../Frameworks/'+f, fl])
     
