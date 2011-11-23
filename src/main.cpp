@@ -68,6 +68,28 @@ void nodKinect(KinectDriver &driver) {
     driver.setTiltAngle(0);
 }
 
+bool initDepthGenerator(xn::Context &context, xn::DepthGenerator &depth) {
+    XnStatus rc = XN_STATUS_OK;	
+	XnMapOutputMode map_mode; 
+	
+    rc = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth);
+    if (rc == XN_STATUS_OK) {
+        depth.GetMapOutputMode(map_mode);
+    } else {
+        rc = depth.Create(context);
+		error_if_not(rc == XN_STATUS_OK, "error creating depth generator");
+		if (rc != XN_STATUS_OK) return false;
+		
+		// make new map mode -> default to 640 x 480 @ 30fps
+		map_mode.nXRes = XN_VGA_X_RES;
+		map_mode.nYRes = XN_VGA_Y_RES;
+		map_mode.nFPS  = 30;
+		
+		depth.SetMapOutputMode(map_mode);
+    }
+    return true;
+}
+
 int main(int argc, char** argv) {
     driver.setup();
     nodKinect(driver);
@@ -77,19 +99,13 @@ int main(int argc, char** argv) {
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
     
-//    xn::DepthGenerator depth;
-//    ret = depth.Create(context);
-//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create depth node"))
-//        return -1;
-//    
     
-//    xn::ImageGenerator image;
-//    ret = image.Create(context);
-//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create image node"))
-//        return -1;
-//    ret = userGenerator.Create(context);
-//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create user node"))
-//        return -1;
+	xn::DepthGenerator	depthGenerator;
+	xn::DepthMetaData	dmd;
+    
+    if (!initDepthGenerator(context, depthGenerator)) {
+        
+    }
 
     context.Shutdown();
     message("finish");
