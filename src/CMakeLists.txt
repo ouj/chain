@@ -28,9 +28,20 @@ ${KINECT_DEP}/lib/libXnVHandGenerator_1_4_1.dylib
 ${KINECT_DEP}/lib/libXnVNite_1_4_1.dylib
 )
 
-SOURCE_GROUP("Resources" FILES ${RESOURCE} ${DYLIB})
+set(CFG_FILES
+${KINECT_DEP}/config/modules.xml
+${KINECT_DEP}/config/FeatureExtraction.ini
+${KINECT_DEP}/config/h.dat
+${KINECT_DEP}/config/s.dat
+${KINECT_DEP}/config/GlobalDefaults.ini
+${KINECT_DEP}/config/Nite.ini
+)
 
-add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB})
+SOURCE_GROUP("Resources" FILES ${RESOURCE})
+SOURCE_GROUP("Resources\\Dynamic Libs" FILES ${DYLIB})
+SOURCE_GROUP("Resources\\Config Files" FILES ${CFG_FILES})
+
+add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB} ${CFG_FILES})
 target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} ${DYLIB} ${BOX2D})
 
 SET( MACOSX_BUNDLE_INFO_STRING "Jiawei's Viewer")
@@ -41,5 +52,5 @@ SET( MACOSX_BUNDLE_BUNDLE_NAME "J Viewer")
 SET( MACOSX_BUNDLE_COPYRIGHT "Jiawei Ou allright reserved..")
 
 SET_SOURCE_FILES_PROPERTIES(icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-
 SET_SOURCE_FILES_PROPERTIES(${DYLIB} PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)
+SET_SOURCE_FILES_PROPERTIES(${CFG_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)

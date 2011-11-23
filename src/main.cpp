@@ -74,7 +74,8 @@ bool initDepthGenerator(xn::Context &context, xn::DepthGenerator &depth) {
 	
     rc = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth);
     if (rc == XN_STATUS_OK) {
-        depth.GetMapOutputMode(map_mode);
+        rc = depth.GetMapOutputMode(map_mode);
+        error_if_not(rc == XN_STATUS_OK, "failed to get map output mode");
     } else {
         rc = depth.Create(context);
 		error_if_not(rc == XN_STATUS_OK, "error creating depth generator");
@@ -85,27 +86,29 @@ bool initDepthGenerator(xn::Context &context, xn::DepthGenerator &depth) {
 		map_mode.nYRes = XN_VGA_Y_RES;
 		map_mode.nFPS  = 30;
 		
-		depth.SetMapOutputMode(map_mode);
+		rc = depth.SetMapOutputMode(map_mode);
+        error_if_not(rc == XN_STATUS_OK, "failed to set map output mode");
     }
     return true;
 }
 
 int main(int argc, char** argv) {
     driver.setup();
-    nodKinect(driver);
+    //nodKinect(driver);
     driver.setLedOption(LED_YELLOW);
     
     XnStatus ret = context.Init();
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
     
-    
 	xn::DepthGenerator	depthGenerator;
 	xn::DepthMetaData	dmd;
     
     if (!initDepthGenerator(context, depthGenerator)) {
-        
+        error("failed to init kinect");
+        exit(-1);
     }
+
 
     context.Shutdown();
     message("finish");

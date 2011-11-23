@@ -1,5 +1,5 @@
 <Modules>
-    <Module path="../Frameworks/config/libXnDeviceSensorV2KM.dylib" configDir="../Frameworks/config/" />
-    <Module path="./../../../data/openni/lib/libXnVFeatures_1_3_1.dylib" configDir="./../../../data/openni/config/" />
-    <Module path="./../../../data/openni/lib/libXnVHandGenerator_1_3_1.dylib" configDir="./../../../data/openni/config/" />
+    <Module path="@executable_path/../Frameworks/libXnDeviceSensorV2KM.dylib" configDir="" />
+    <Module path="@executable_path/../Frameworks/libXnVFeatures_1_3_1.dylib" configDir="" />
+    <Module path="@executable_path/../Frameworks/libXnVHandGenerator_1_3_1.dylib" configDir="" />
 </Modules>
