@@ -5,7 +5,14 @@
 #include <OpenGL/OpenGL.h>
 #include <GLUT/GLUT.h>
 #endif // WIN32
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
 #include <XnCppWrapper.h>
+#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 #include "debug.h"
 

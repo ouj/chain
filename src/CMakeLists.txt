@@ -1,5 +1,12 @@
 set(SOURCE
 debug.h
+func.h
+vec.h
+array.h
+driver.h
+driver.cpp
+stdmath.h
+stdmath.cpp
 main.cpp
 )
 
