@@ -16,6 +16,7 @@
 #pragma GCC diagnostic pop
 
 #include "debug.h"
+#include "driver.h"
 #include <Box2D/Box2D.h>
 
 xn::Context context;
@@ -57,7 +58,21 @@ void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUser
     }
 }
 
+KinectDriver driver;
+
+void nodKinect(KinectDriver &driver) {
+    driver.setTiltAngle(30);
+    sleep(2);
+    driver.setTiltAngle(-30);
+    sleep(2);
+    driver.setTiltAngle(0);
+}
+
 int main(int argc, char** argv) {
+    driver.setup();
+    nodKinect(driver);
+    driver.setLedOption(LED_YELLOW);
+    
     XnStatus ret = context.Init();
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
@@ -72,10 +87,10 @@ int main(int argc, char** argv) {
 //    ret = image.Create(context);
 //    if(!error_if_not(ret == XN_STATUS_OK, "failed to create image node"))
 //        return -1;
-    ret = userGenerator.Create(context);
-    if(!error_if_not(ret == XN_STATUS_OK, "failed to create user node"))
-        return -1;
-    
+//    ret = userGenerator.Create(context);
+//    if(!error_if_not(ret == XN_STATUS_OK, "failed to create user node"))
+//        return -1;
+
     context.Shutdown();
     message("finish");
     return 0;

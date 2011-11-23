@@ -3,6 +3,7 @@
 #include "func.h"
 
 KinectDriver::KinectDriver() {
+    ctx = 0;
 	message("Init lib_usb control of Kinect Motor, LEDs and accelerometers");
 }
 
@@ -137,5 +138,8 @@ void KinectDriver::shutDown() {
 						// strange behaviour if the kinect is tilted in between 
 						// application starts eg., the angle continues to be set 
 						// even when app not running...which is odd...
-	libusb_exit(ctx);
+	if (ctx != 0) {
+        libusb_exit(ctx);
+        ctx = 0;  
+    }
 }
