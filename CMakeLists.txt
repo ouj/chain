@@ -26,21 +26,23 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${BIN_DIR_SUFFIX})
 
 #include directories
 include_directories(${PROJECT_SOURCE_DIR}/src)
-include_directories(${PROJECT_SOURCE_DIR}/kinect/include)
+include_directories(${PROJECT_SOURCE_DIR}/kinect/include/nite)
 include_directories(${PROJECT_SOURCE_DIR}/kinect/include/openni)
+include_directories(${PROJECT_SOURCE_DIR}/box2d/include)
 include_directories(/homebrew/include)
 include_directories(/usr/local/include)
 
 #library directories
-link_directories(${PROJECT_SOURCE_DIR}/kinect/lib)
-link_directories(/homebrew/lib)
-link_directories(/usr/local/lib)
+#link_directories(${PROJECT_SOURCE_DIR}/kinect/lib)
+#link_directories(/usr/local/lib)
 
 # libraries
 find_package(GLUT)
 find_package(OpenGL)
 
 GET_FILENAME_COMPONENT(KINECT_DEP ${PROJECT_SOURCE_DIR}/kinect ABSOLUTE)
+GET_FILENAME_COMPONENT(BOX2D_DEP ${PROJECT_SOURCE_DIR}/box2d ABSOLUTE)
+find_library(BOX2D Box2D ${BOX2D_DEP}/lib)
 
 if(WIN32)
     GET_FILENAME_COMPONENT(GL_PATH ../OpenGL ABSOLUTE)
