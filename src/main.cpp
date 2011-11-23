@@ -9,6 +9,7 @@
 #include <XnVNite.h>
 
 #include "debug.h"
+#include <Box2D/Box2D.h>
 
 xn::Context context;
 
@@ -22,6 +23,12 @@ int main(int argc, char** argv) {
 //    if(!error_if_not(ret == XN_STATUS_OK, "failed to create depth node"))
 //        return -1;
 //    
+    
+    xn::ImageGenerator image;
+    ret = image.Create(context);
+    if(!error_if_not(ret == XN_STATUS_OK, "failed to create image node"))
+        return -1;
+    
     
     context.Shutdown();
     message("finish");

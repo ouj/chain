@@ -24,7 +24,7 @@ ${KINECT_DEP}/lib/libXnVNite_1_4_1.dylib
 SOURCE_GROUP("Resources" FILES ${RESOURCE} ${DYLIB})
 
 add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB})
-target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} libOpenNI.dylib)
+target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} ${DYLIB} ${BOX2D})
 
 SET( MACOSX_BUNDLE_INFO_STRING "Jiawei's Viewer")
 SET( MACOSX_BUNDLE_BUNDLE_VERSION "2.0.0")
