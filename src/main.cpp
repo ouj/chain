@@ -34,7 +34,7 @@ void display() {
     glClearColor(0.5,0.5,0.5,0);
     glClear(GL_COLOR_BUFFER_BIT);
     //glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_LUMINANCE, GL_UNSIGNED_SHORT, dImg);
-    glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_RGB, GL_UNSIGNED_BYTE, cImg);
+    if (cImg) glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_RGB, GL_UNSIGNED_BYTE, cImg);
     glutSwapBuffers();
 }
 

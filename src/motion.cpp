@@ -1,45 +1,16 @@
 #include "motion.h"
 #include "debug.h"
 
-static xn::Context         _context;
-static xn::UserGenerator   _user;
+static xn::Context          _context;
+static xn::UserGenerator    _user;
 static xn::DepthGenerator	_depth;
-static xn::ImageGenerator  _image;
+static xn::ImageGenerator   _image;
 static xn::DepthMetaData	_dmd;
-
-void addLicense(xn::Context &context, const XnChar* sVendor, const XnChar* sKey) {
-	
-	XnLicense license = {0};
-	XnStatus status = XN_STATUS_OK;
-	
-	status = xnOSStrNCopy(license.strVendor, sVendor, strlen(sVendor), sizeof(license.strVendor));
-	if(status != XN_STATUS_OK) {
-		error_va("failed to creating license (%s)", sVendor);
-		return;
-	}
-	
-	status = xnOSStrNCopy(license.strKey, sKey, strlen(sKey), sizeof(license.strKey));
-	if(status != XN_STATUS_OK) {
-		error_va("failed to creating license (%s)", sKey);
-		return;
-	}	
-	
-	status = context.AddLicense(license);	
-    if(status != XN_STATUS_OK) {
-		error("failed to creating license");
-		return;
-	}
-	xnPrintRegisteredLicenses();
-	return;
-}
 
 bool setupKinect() {
     XnStatus ret = _context.Init();
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
-    
-    //addLicense(_context, "PrimeSense", "0KOIk2JeIBYClPWVnMoRKn5cdY4=");
-    xnPrintRegisteredLicenses();
     
     if (!initDepthGenerator(_context, _depth)) {
         error("failed to init depth genreator");
@@ -60,14 +31,20 @@ bool setupKinect() {
 }
 
 const XnRGB24Pixel* getKinectColorImage() {
-    return _image.GetRGB24ImageMap();
+    if (_image.IsValid()) 
+        return _image.GetRGB24ImageMap();
+    return 0;
 }
 
 const XnDepthPixel* getKinectDepthImage() {
-    return _depth.GetDepthMap();
+    if (_depth.IsValid()) 
+        return _depth.GetDepthMap();
+    return 0;
 }
                                      
 const xn::SkeletonCapability getSkeleton() {
+    if (!_user.IsValid())
+        error("invalid user node");
     return _user.GetSkeletonCap();
 }
 
