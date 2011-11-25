@@ -1,4 +1,4 @@
-#include "motion.h"
+#include "kinect.h"
 #include "debug.h"
 
 static KinectDriver         _driver;

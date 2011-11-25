@@ -1,13 +1,14 @@
 #ifndef _MOTION_H_
 #define _MOTION_H_
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
 #include <XnCppWrapper.h>
 #include <XnVNite.h>
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 #include "driver.h"
+#include "user.h"
 #define POSE_TO_USE "Psi"
 
 bool setupKinect();

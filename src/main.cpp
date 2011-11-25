@@ -8,7 +8,7 @@
 
 #include "debug.h"
 #include "array.h"
-#include "motion.h"
+#include "kinect.h"
 #include <Box2D/Box2D.h>
 
 const int kwidth = XN_VGA_X_RES;
@@ -48,15 +48,10 @@ void display() {
     XnUInt16 nusers = 15; 
     getUserGenerator().GetUsers(ausers, nusers);
     
+    // draw background image
     bool hasMask = false;
     if (nusers >= 1) {
-        XnUserID userId = ausers[0];
-        if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
-            XnSkeletonJointPosition Head; 
-            getUserGenerator().GetSkeletonCap().GetSkeletonJointPosition(userId, XN_SKEL_HEAD, Head); 
-            message_va("%d: (%f,%f,%f) [%f]", userId,                                                                                                                                           Head.position.X, Head.position.Y, Head.position.Z, Head.fConfidence);
-        }
-        
+        XnUserID userId = ausers[0];        
         xn::SceneMetaData smd;
         unsigned short *userPix;
         if (getUserGenerator().GetUserPixels(userId, smd) == XN_STATUS_OK) { 
@@ -72,11 +67,11 @@ void display() {
     
     const XnRGB24Pixel* cImg = getKinectColorImage();
     const XnDepthPixel* dImg = getKinectDepthImage();
-    for (int j = 0; j < XN_VGA_Y_RES; j++) {
-        for (int i = 0; i < XN_VGA_X_RES; i++) {
-            XnRGB24Pixel p = cImg[(XN_VGA_Y_RES - j - 1) * XN_VGA_X_RES + i];
-            XnDepthPixel d = dImg[(XN_VGA_Y_RES - j - 1) * XN_VGA_X_RES + i];
-            if (hasMask && mask[(XN_VGA_Y_RES - j - 1) * XN_VGA_X_RES + i]) {
+    for (int j = 0; j < kheight; j++) {
+        for (int i = 0; i < kwidth; i++) {
+            XnRGB24Pixel p = cImg[(kheight - j - 1) * kwidth + i];
+            XnDepthPixel d = dImg[(kheight - j - 1) * kwidth + i];
+            if (hasMask && mask[(kheight - j - 1) * kwidth + i]) {
                 image.at(i, j) = red;
             } else {
                 if (d > 0) image.at(i, j) = makecolor(p.nRed, p.nGreen, p.nBlue);
@@ -85,9 +80,20 @@ void display() {
         }
     }
     
+    // draw user
+    if (nusers >= 1) {
+        XnUserID userId = ausers[0]; 
+        if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
+            XnSkeletonJointPosition Head; 
+            getUserGenerator().GetSkeletonCap().GetSkeletonJointPosition(userId, XN_SKEL_HEAD, Head); 
+            message_va("%d: (%f,%f,%f) [%f]", userId,                                                                                                                                           Head.position.X, Head.position.Y, Head.position.Z, Head.fConfidence);
+        }
+        
+    }
+    
     glClearColor(0.5,0.5,0.5,0);
     glClear(GL_COLOR_BUFFER_BIT);
-    if (cImg) glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+    if (cImg) glDrawPixels(kwidth, kheight, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
     glutSwapBuffers();
 }
 

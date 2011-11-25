@@ -8,8 +8,10 @@ driver.cpp
 stdmath.h
 stdmath.cpp
 main.cpp
-motion.h
-motion.cpp
+kinect.h
+kinect.cpp
+user.h
+user.cpp
 )
 
 set(RESOURCE
