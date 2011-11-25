@@ -1,6 +1,7 @@
 #include "motion.h"
 #include "debug.h"
 
+static KinectDriver         _driver;
 static xn::Context          _context;
 static xn::UserGenerator    _user;
 static xn::DepthGenerator	_depth;
@@ -8,6 +9,10 @@ static xn::ImageGenerator   _image;
 static xn::DepthMetaData	_dmd;
 
 bool setupKinect() {
+    _driver.setup();
+    _driver.setTiltAngle(0);
+    _driver.setLedOption(LED_GREEN);
+    
     XnStatus ret = _context.Init();
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
@@ -27,8 +32,14 @@ bool setupKinect() {
         return false;
     }
     
+    _driver.setLedOption(LED_BLINK_RED_YELLOW);
+    
     return true;
 }
+
+KinectDriver& getKinect() { return _driver; }
+
+xn::UserGenerator& getUserGenerator() { return _user; }
 
 const XnRGB24Pixel* getKinectColorImage() {
     if (_image.IsValid()) 
@@ -54,6 +65,7 @@ void updateKinect() {
 
 void cleanupKinect() {
     _context.Shutdown();
+    _driver.setLedOption(LED_RED);
 }
 
 bool runKinect() {
@@ -114,39 +126,44 @@ bool initImageGenerator(xn::Context &context, xn::ImageGenerator &image) {
 
 void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator,
                                    XnUserID nId, void* pCookie) {
-    message_va("New User: %d", nId); 
-    _user.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
+    message_va("new user: %d", nId); 
+    generator.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
 }
 
 
 void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId,
                                     void* pCookie) {
-    message_va("Lost user %d\n", nId);
+    message_va("lost user %d\n", nId);
 	generator.GetSkeletonCap().Reset(nId);
+    _driver.setLedOption(LED_BLINK_RED_YELLOW);
 }
 
 void XN_CALLBACK_TYPE Pose_Detected(xn::PoseDetectionCapability& pose, 
                                     const XnChar* strPose, XnUserID nId, 
                                     void* pCookie) {
-    message_va("Pose %s for user %d", strPose, nId); 
-    _user.GetPoseDetectionCap().StopPoseDetection(nId); 
-    _user.GetSkeletonCap().RequestCalibration(nId, TRUE);
+    message_va("pose %s for user %d", strPose, nId); 
+    xn::UserGenerator* generator = static_cast<xn::UserGenerator*>(pCookie);
+    generator->GetPoseDetectionCap().StopPoseDetection(nId); 
+    generator->GetSkeletonCap().RequestCalibration(nId, TRUE);
 }
 
 void XN_CALLBACK_TYPE Calibration_Start(xn::SkeletonCapability& capability, XnUserID nId,
                                         void* pCookie) {
-    message_va("Starting calibration for user %d", nId);
+    message_va("starting calibration for user %d", nId);
+    _driver.setLedOption(LED_YELLOW);
 }
 
 void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUserID nId, 
                                       XnBool bSuccess, void* pCookie) {
+    xn::UserGenerator* generator = static_cast<xn::UserGenerator*>(pCookie);
     if (bSuccess) {
-        message("User calibrated");
-        _user.GetSkeletonCap().StartTracking(nId); 
+        message_va("user %d calibrated", nId);
+        generator->GetSkeletonCap().StartTracking(nId);
+        _driver.setLedOption(LED_BLINK_GREEN);
     } else {
-        message_va("Failed to calibrate user %d", nId);
-        _user.GetPoseDetectionCap().StartPoseDetection( POSE_TO_USE,
-                                                               nId);
+        message_va("failed to calibrate user %d", nId);
+        generator->GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
+        _driver.setLedOption(LED_BLINK_RED_YELLOW);
     }
 }
 
@@ -162,7 +179,8 @@ bool initUserGenerator(xn::Context &context, xn::UserGenerator &user) {
     }
     XnCallbackHandle h1, h2, h3; 
     user.RegisterUserCallbacks(User_NewUser, User_LostUser, 0, h1); 
-    user.GetPoseDetectionCap().RegisterToPoseCallbacks(Pose_Detected, 0, 0, h2); 
-    user.GetSkeletonCap().RegisterCalibrationCallbacks(Calibration_Start, Calibration_End, 0, h3);
+    user.GetPoseDetectionCap().RegisterToPoseCallbacks(Pose_Detected, 0, &user, h2); 
+    user.GetSkeletonCap().RegisterCalibrationCallbacks(Calibration_Start, Calibration_End, &user, h3);
+    user.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
     return true; 
 }

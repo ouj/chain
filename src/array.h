@@ -5,7 +5,6 @@
 #include <algorithm>
 
 //#define ARRAY_CHECK
-namespace near {
 
 #ifdef ARRAY_CHECK
 template <typename T> inline void _check_array_access(const T& a, int i) { error(i >= 0 && i < a.size(), "out of bounds"); }
@@ -294,8 +293,6 @@ inline T1 sbimap_find1(const sarray<sbimap_elem<T1,T2> >& m, const T2& t2) {
     for(int i = 0; i < m.size(); i ++) if(m[i].t2 == t2) return m[i].t1;
     error("unknown value");
     return T1();
-}
-    
 }
 
 #endif

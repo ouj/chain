@@ -7,7 +7,7 @@
 #include <XnVNite.h>
 #pragma clang diagnostic pop
 
-
+#include "driver.h"
 #define POSE_TO_USE "Psi"
 
 bool setupKinect();
@@ -17,15 +17,12 @@ void updateKinect();
 const XnDepthPixel* getKinectDepthImage();
 const XnRGB24Pixel* getKinectColorImage();
 const xn::SkeletonCapability getSkeleton();
+KinectDriver& getKinect();
 
 bool initDepthGenerator(xn::Context &context, xn::DepthGenerator &depth);
 bool initImageGenerator(xn::Context &context, xn::ImageGenerator &image);
 bool initUserGenerator(xn::Context &context, xn::UserGenerator &user);
-//
-//void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie);
-//void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie);
-//void XN_CALLBACK_TYPE Pose_Detected(xn::PoseDetectionCapability& pose, const XnChar* strPose, XnUserID nId, void* pCookie);
-//void XN_CALLBACK_TYPE Calibration_Start(xn::SkeletonCapability& capability, XnUserID nId, void* pCookie);
-//void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUserID nId, XnBool bSuccess, void* pCookie);
+
+xn::UserGenerator& getUserGenerator();
 
 #endif 
