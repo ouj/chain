@@ -42,6 +42,8 @@ void reshape(int w, int h) {
     glViewport(0, 0, w, h);
 }
 
+
+KinectUser kinectUser;
 void display() {
     updateKinect();
     XnUserID ausers[15];
@@ -84,9 +86,8 @@ void display() {
     if (nusers >= 1) {
         XnUserID userId = ausers[0]; 
         if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
-            XnSkeletonJointPosition Head; 
-            getUserGenerator().GetSkeletonCap().GetSkeletonJointPosition(userId, XN_SKEL_HEAD, Head); 
-            message_va("%d: (%f,%f,%f) [%f]", userId,                                                                                                                                           Head.position.X, Head.position.Y, Head.position.Z, Head.fConfidence);
+            kinectUser.update(getUserGenerator(), getDepthGenerator(), userId);
+            kinectUser.glDraw();
         }
         
     }

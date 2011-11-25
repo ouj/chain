@@ -39,6 +39,8 @@ bool setupKinect() {
 
 KinectDriver& getKinect() { return _driver; }
 
+xn::DepthGenerator& getDepthGenerator() { return _depth; }
+xn::ImageGenerator& getImageGenerator() { return _image; }
 xn::UserGenerator& getUserGenerator() { return _user; }
 
 const XnRGB24Pixel* getKinectColorImage() {
