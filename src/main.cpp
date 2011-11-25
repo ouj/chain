@@ -6,60 +6,15 @@
 #include <GLUT/GLUT.h>
 #endif // WIN32
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wall"
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
-#include <XnCppWrapper.h>
-#include <XnVNite.h>
-#pragma clang diagnostic pop
-#pragma GCC diagnostic pop
-
 #include "debug.h"
 #include "driver.h"
+#include "motion.h"
 #include <Box2D/Box2D.h>
 
-xn::Context context;
-xn::UserGenerator userGenerator;
-#define POSE_TO_USE "Psi"
-
-void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator,
-                                   XnUserID nId, void* pCookie) {
-    message_va("New User: %d", nId); 
-    userGenerator.GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
-}
-
-
-void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId,
-                                    void* pCookie) { }
-
-void XN_CALLBACK_TYPE Pose_Detected(xn::PoseDetectionCapability& pose, 
-                                    const XnChar* strPose, XnUserID nId, 
-                                    void* pCookie) {
-    message_va("Pose %s for user %d", strPose, nId); 
-    userGenerator.GetPoseDetectionCap().StopPoseDetection(nId); 
-    userGenerator.GetSkeletonCap().RequestCalibration(nId, TRUE);
-}
-
-void XN_CALLBACK_TYPE Calibration_Start(xn::SkeletonCapability& capability, XnUserID nId,
-                                        void* pCookie) {
-    message_va("Starting calibration for user %d", nId);
-}
-
-void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUserID nId, 
-                                      XnBool bSuccess, void* pCookie) {
-    if (bSuccess) {
-        message("User calibrated");
-        userGenerator.GetSkeletonCap().StartTracking(nId); 
-    } else {
-        message_va("Failed to calibrate user %d", nId);
-        userGenerator.GetPoseDetectionCap().StartPoseDetection( POSE_TO_USE,
-                                                                 nId);
-    }
-}
+const int kwidth = 512;
+const int kheight = 512;
 
 KinectDriver driver;
-
 void nodKinect(KinectDriver &driver) {
     driver.setTiltAngle(30);
     sleep(2);
@@ -68,49 +23,71 @@ void nodKinect(KinectDriver &driver) {
     driver.setTiltAngle(0);
 }
 
-bool initDepthGenerator(xn::Context &context, xn::DepthGenerator &depth) {
-    XnStatus rc = XN_STATUS_OK;	
-	XnMapOutputMode map_mode; 
-	
-    rc = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth);
-    if (rc == XN_STATUS_OK) {
-        rc = depth.GetMapOutputMode(map_mode);
-        error_if_not(rc == XN_STATUS_OK, "failed to get map output mode");
-    } else {
-        rc = depth.Create(context);
-		error_if_not(rc == XN_STATUS_OK, "error creating depth generator");
-		if (rc != XN_STATUS_OK) return false;
-		
-		// make new map mode -> default to 640 x 480 @ 30fps
-		map_mode.nXRes = XN_VGA_X_RES;
-		map_mode.nYRes = XN_VGA_Y_RES;
-		map_mode.nFPS  = 30;
-		
-		rc = depth.SetMapOutputMode(map_mode);
-        error_if_not(rc == XN_STATUS_OK, "failed to set map output mode");
-    }
-    return true;
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
+}
+
+void display() {
+    updateKinect();
+    const XnDepthPixel* dImg = getKinectDepthImage();
+    const XnRGB24Pixel* cImg = getKinectColorImage();
+    glClearColor(0.5,0.5,0.5,0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    //glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_LUMINANCE, GL_UNSIGNED_SHORT, dImg);
+    glDrawPixels(XN_VGA_X_RES, XN_VGA_Y_RES, GL_RGB, GL_UNSIGNED_BYTE, cImg);
+    glutSwapBuffers();
+}
+
+void idle() {
+    glutPostRedisplay();
+}
+
+void initGlut(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitWindowPosition(256, 128);
+    glutInitWindowSize(XN_VGA_X_RES, XN_VGA_Y_RES);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutCreateWindow("angry man");
+    
+    glutIgnoreKeyRepeat(1);
+    
+    glutDisplayFunc(display);
+//    glutKeyboardFunc(keyboardDown);
+//    glutKeyboardUpFunc(keyboardUp);
+    //glutMouseFunc(mouse);
+    //glutMotionFunc(motion);
+    glutIdleFunc(idle);
+}
+
+void run() {
+    runKinect();
+    glutMainLoop();
 }
 
 int main(int argc, char** argv) {
-    driver.setup();
-    //nodKinect(driver);
-    driver.setLedOption(LED_YELLOW);
+//    driver.setup();
+//    nodKinect(driver);
+//    driver.setLedOption(LED_YELLOW);
     
-    XnStatus ret = context.Init();
-    if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
-        return -1;
-    
-	xn::DepthGenerator	depthGenerator;
-	xn::DepthMetaData	dmd;
-    
-    if (!initDepthGenerator(context, depthGenerator)) {
-        error("failed to init kinect");
-        exit(-1);
+    if(!setupKinect()) {
+        error("failed to initialize kinect");
+        return 0;
     }
+    
+    initGlut(argc,argv);
+    run();
+    
+//    XnUInt32 middle = XN_VGA_X_RES * XN_VGA_Y_RES/2 + XN_VGA_X_RES/2;    
+//    XnStatus rc = context.StartGeneratingAll();
+//    while (true) {
+//        // Update to next frame
+//        rc = context.WaitOneUpdateAll(depth); // TODO: check error code
+//        error_if_not_va(rc == XN_STATUS_OK, "failed to update");
+//        const XnDepthPixel* pDepthMap = depth.GetDepthMap(); 
+//        message_va("Middle pixel is %u millimeters away\n", pDepthMap[middle]);
+//    }
 
-
-    context.Shutdown();
+    cleanupKinect();
     message("finish");
     return 0;
 }

@@ -4,7 +4,7 @@
 
 KinectDriver::KinectDriver() {
     ctx = 0;
-	message("Init lib_usb control of Kinect Motor, LEDs and accelerometers");
+	//message("Init lib_usb control of Kinect Motor, LEDs and accelerometers");
 }
 
 KinectDriver::~KinectDriver() {
@@ -17,11 +17,7 @@ void KinectDriver::setup(int index)
 	libusb_init(&ctx);
 	libusb_device **devs; //pointer to pointer of device, used to retrieve a list of devices
 	ssize_t cnt = libusb_get_device_list (ctx, &devs); //get the list of devices
-	if (cnt < 0)
-	{
-		printf("No device on USB\n");
-		return;
-	}
+    if (!error_if_not_va(cnt >= 0, "No device on USB")) return;
 	
 	int nr_mot(0);
 	for (int i = 0; i < cnt; ++i)
@@ -31,7 +27,7 @@ void KinectDriver::setup(int index)
 		if (r < 0)
 			continue;
 		
-		printf("Device: %i Vendor: %i Product: %i\n", i, desc.idVendor, desc.idProduct);
+		//message_va("Device: %i Vendor: %i Product: %i\n", i, desc.idVendor, desc.idProduct);
 		
 		// Search for the aux
 		if (desc.idVendor == MS_MAGIC_VENDOR && desc.idProduct == MS_MAGIC_MOTOR_PRODUCT)
@@ -39,13 +35,12 @@ void KinectDriver::setup(int index)
 			// If the index given by the user matches our camera index
 			if (nr_mot == index)
 			{
-				if ((libusb_open (devs[i], &dev) != 0) || (dev == 0))
-				{
-					printf("Cannot open aux %d\n", index);
+				if ((libusb_open (devs[i], &dev) != 0) || (dev == 0)) {
+					error_va("Cannot open aux %d\n", index);
 					return;
 				}
 				// Claim the aux
-				printf("Openning device aux %d on 0\n", i);
+				message_va("Openning device aux %d on 0\n", i);
 				libusb_claim_interface (dev, 0);
 				break;
 			}
@@ -104,12 +99,7 @@ void KinectDriver::setTiltAngle(int angle)
 	angle = (angle<MIN_TILT_ANGLE) ? MIN_TILT_ANGLE : ((angle>MAX_TILT_ANGLE) ? MAX_TILT_ANGLE : angle);
 	angle = angle * 2;
 	const int ret = libusb_control_transfer(dev, 0x40, 0x31, (uint16_t)angle, 0x0, empty, 0x0, 0);
-	if (ret != 0)
-	{
-		printf("Error in setting tilt angle, libusb_control_transfer returned %i", ret);
-		return;
-	}
-	
+    error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
 	//tilt_angle = angle;
 }
 
@@ -124,12 +114,8 @@ vec3f KinectDriver::getAccelerometers() {
 void KinectDriver::setLedOption(uint16_t option)
 {
 	uint8_t empty[0x1];
-
 	const int ret = libusb_control_transfer(dev, 0x40, 0x06, (uint16_t)option, 0x0, empty, 0x0, 0);
-	if (ret != 0)
-	{
-		printf("Error in setting tilt angle, libusb_control_transfer returned %i", ret);
-	}
+    error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
 }
 
 void KinectDriver::shutDown() {

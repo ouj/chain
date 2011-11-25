@@ -8,6 +8,8 @@ driver.cpp
 stdmath.h
 stdmath.cpp
 main.cpp
+motion.h
+motion.cpp
 )
 
 set(RESOURCE
@@ -30,6 +32,7 @@ ${KINECT_DEP}/lib/libXnVNite_1_4_1.dylib
 
 set(CFG_FILES
 ${KINECT_DEP}/config/modules.xml
+${KINECT_DEP}/config/licenses.xml
 ${KINECT_DEP}/config/FeatureExtraction.ini
 ${KINECT_DEP}/config/h.dat
 ${KINECT_DEP}/config/s.dat
