@@ -94,8 +94,14 @@ void renderBackground() {
                         GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
     }
     
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glColor4f(1,1,1,1);
     drawQuad();
+    glPopMatrix();
     
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
@@ -136,30 +142,34 @@ void renderBackground(XnUserID userId) {
                         GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
     }
     
+    glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glColor4f(1,1,1,1);
     drawQuad();
+    glPopMatrix();
     
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
-    
 }
 
 void renderSkeleton(XnUserID userId) {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
     glLoadIdentity();
     glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
     getKinectUser().glDraw();
     glPopMatrix();
 }
 
-
 void display() {
     updateKinect();
     gameLogic();
     glClearColor(1.0,1.0,1.0,0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
     drawGame();
     
     XnUserID userId;
@@ -176,7 +186,6 @@ void display() {
         renderBackground();
         glPopAttrib();
     }
-
     glutSwapBuffers();
 }
 

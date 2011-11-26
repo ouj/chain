@@ -21,11 +21,13 @@ KinectLimb::KinectLimb(XnSkeletonJoint nStartJoint, XnSkeletonJoint nEndJoint)
 void KinectLimb::glDraw() {
     if(!found) return;
     glLineWidth(5);
+    
     glColor3f(0,0,1);
     glBegin(GL_LINES);
     glVertex2f(posSrn[0].X, posSrn[0].Y);
     glVertex2f(posSrn[1].X, posSrn[1].Y);
     glEnd();
+    
     glPointSize(10);
     glBegin(GL_POINTS);
     glColor3f(1,0,0);

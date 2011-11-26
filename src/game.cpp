@@ -22,49 +22,37 @@ void gameLogic() {
 
 
 void drawUser(KinectUser &user) {
+//    glPushMatrix();
+//    
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
+//    
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+//    glScalef(0.2, 0.2, 0.2);
+//    glTranslated(user.center3D.X, user.center3D.Y, 0);
+//    
+//    getKinectUser().glDraw();
+//    
+//    glPopMatrix();
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    if (user.tracking) {
-        user.neck.glDraw();
-        
-        // left arm + shoulder
-        user.leftShoulder.glDraw();
-        user.leftUpperArm.glDraw();
-        user.leftLowerArm.glDraw();
-        
-        // right arm + shoulder
-        user.rightShoulder.glDraw();
-        user.rightUpperArm.glDraw();
-        user.rightLowerArm.glDraw();
-        
-        // upper torso
-        user.leftUpperTorso.glDraw();
-        user.rightUpperTorso.glDraw();
-        
-        // left lower torso + leg
-        user.leftLowerTorso.glDraw();
-        user.leftUpperLeg.glDraw();
-        user.leftLowerLeg.glDraw();
-        
-        // right lower torso + leg
-        user.rightLowerTorso.glDraw();
-        user.rightUpperLeg.glDraw();
-        user.rightLowerLeg.glDraw();
-        
-        user.hip.glDraw();
-    }
-    
+    user.glDraw();
     glPopMatrix();
 }
 
 void drawGameBackground() {
-    glLineWidth(2);
+    glPushMatrix();
     
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    glLineWidth(2);
     glColor3f(0,0,0);
     glBegin(GL_QUADS);
     glColor3f(0.8, 0.8, 0.8);
@@ -74,9 +62,11 @@ void drawGameBackground() {
     glVertex2f( 1, -1);
     glVertex2f(-1, -1);
     glEnd();
+    
+    glPopMatrix();
 }
 
 void drawGame() {
     drawGameBackground();
-    
+    drawUser(getKinectUser());
 }
