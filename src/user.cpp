@@ -1,6 +1,11 @@
 #include "user.h"
 #include "debug.h"
 
+static KinectUser kinectUser;
+KinectUser& getKinectUser() {
+    return kinectUser;
+}
+
 KinectLimb::KinectLimb(XnSkeletonJoint nStartJoint, XnSkeletonJoint nEndJoint) 
 : startJoint(nStartJoint), endJoint(nEndJoint) ,found(false) {
     posSrn[0].X = posSrn[1].X = 0;
@@ -37,11 +42,12 @@ leftUpperLeg(XN_SKEL_LEFT_HIP, XN_SKEL_LEFT_KNEE),
 leftLowerLeg(XN_SKEL_LEFT_KNEE, XN_SKEL_LEFT_FOOT),
 rightLowerTorso(XN_SKEL_TORSO, XN_SKEL_RIGHT_HIP),
 rightUpperLeg(XN_SKEL_RIGHT_HIP, XN_SKEL_RIGHT_KNEE),
-rightLowerLeg(XN_SKEL_RIGHT_KNEE, XN_SKEL_RIGHT_FOOT), tracking(false) {
-    
+rightLowerLeg(XN_SKEL_RIGHT_KNEE, XN_SKEL_RIGHT_FOOT), 
+hip(XN_SKEL_LEFT_HIP, XN_SKEL_RIGHT_HIP), tracking(false) {
 }
 
 void KinectUser::glDraw() {
+    if (tracking == false) return;
     neck.glDraw();
 	
 	// left arm + shoulder
@@ -72,42 +78,41 @@ void KinectUser::glDraw() {
 }
 
 void KinectUser::update(xn::UserGenerator &user, xn::DepthGenerator &depth, XnUserID id) {
-    this->id = id;
-    
-    updateLimb(neck, user, depth);
-	
-	// left arm + shoulder
-	updateLimb(leftShoulder, user, depth);
-	updateLimb(leftUpperArm, user, depth);
-	updateLimb(leftLowerArm, user, depth);
-	
-	// right arm + shoulder
-	updateLimb(rightShoulder, user, depth);
-	updateLimb(rightUpperArm, user, depth);
-	updateLimb(rightLowerArm, user, depth);
-	
-	// upper torso
-	updateLimb(leftUpperTorso, user, depth);
-	updateLimb(rightUpperTorso, user, depth);
-	
-	// left lower torso + leg
-	updateLimb(leftLowerTorso, user, depth);
-	updateLimb(leftUpperLeg, user, depth);
-	updateLimb(leftLowerLeg, user, depth);
-	
-	// right lower torso + leg
-	updateLimb(rightLowerTorso, user, depth);
-	updateLimb(rightUpperLeg, user, depth);
-	updateLimb(rightLowerLeg, user, depth);
-    
-	updateLimb(hip, user, depth);	
+    if (user.GetSkeletonCap().IsTracking(id)) {
+        this->id = id;
+        tracking = true;
+        
+        updateLimb(neck, user, depth);
+        
+        // left arm + shoulder
+        updateLimb(leftShoulder, user, depth);
+        updateLimb(leftUpperArm, user, depth);
+        updateLimb(leftLowerArm, user, depth);
+        
+        // right arm + shoulder
+        updateLimb(rightShoulder, user, depth);
+        updateLimb(rightUpperArm, user, depth);
+        updateLimb(rightLowerArm, user, depth);
+        
+        // upper torso
+        updateLimb(leftUpperTorso, user, depth);
+        updateLimb(rightUpperTorso, user, depth);
+        
+        // left lower torso + leg
+        updateLimb(leftLowerTorso, user, depth);
+        updateLimb(leftUpperLeg, user, depth);
+        updateLimb(leftLowerLeg, user, depth);
+        
+        // right lower torso + leg
+        updateLimb(rightLowerTorso, user, depth);
+        updateLimb(rightUpperLeg, user, depth);
+        updateLimb(rightLowerLeg, user, depth);
+        
+        updateLimb(hip, user, depth);
+    } else tracking = false;
 }
 
-void KinectUser::updateLimb(KinectLimb& limb, xn::UserGenerator &user, xn::DepthGenerator &depth) {
-    if(!user.GetSkeletonCap().IsTracking(id)) {
-		return;
-	}
-	
+void KinectUser::updateLimb(KinectLimb& limb, xn::UserGenerator &user, xn::DepthGenerator &depth) {	
 	XnSkeletonJointPosition a,b;
 	user.GetSkeletonCap().GetSkeletonJointPosition(id, limb.startJoint, a);
 	user.GetSkeletonCap().GetSkeletonJointPosition(id, limb.endJoint, b);

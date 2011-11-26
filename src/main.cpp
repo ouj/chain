@@ -9,7 +9,7 @@
 #include "debug.h"
 #include "array.h"
 #include "kinect.h"
-#include <Box2D/Box2D.h>
+#include "game.h"
 
 const int kwidth = XN_VGA_X_RES;
 const int kheight = XN_VGA_Y_RES;
@@ -144,7 +144,6 @@ void renderBackground(XnUserID userId) {
     
 }
 
-KinectUser kinectUser;
 void renderSkeleton(XnUserID userId) {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -153,30 +152,31 @@ void renderSkeleton(XnUserID userId) {
     xn::DepthMetaData depthMD;
     getDepthGenerator().GetMetaData(depthMD);
     glOrtho(0, depthMD.XRes(), depthMD.YRes(), 0, -1.0, 1.0);
-    // draw user
-    if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
-        kinectUser.update(getUserGenerator(), getDepthGenerator(), userId);
-        kinectUser.glDraw();
-    }
+    getKinectUser().glDraw();
     glPopMatrix();
 }
 
 
 void display() {
     updateKinect();
-
-    glClearColor(0.5,0.5,0.5,0);
+    gameLogic();
+    glClearColor(1.0,1.0,1.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
+    drawGame();
     
     XnUserID userId;
     if (getUserId(userId)) {
+        getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
+        glPushAttrib(GL_VIEWPORT_BIT);
         glViewport(kwidth - 160, kheight - 120, 160, 120);
-        
         renderBackground(userId);
         renderSkeleton(userId);
+        glPopAttrib();
     } else {
-        glViewport(0, 0, kwidth, kheight);
+        glPushAttrib(GL_VIEWPORT_BIT);
+        glViewport(kwidth - 160, kheight - 120, 160, 120);
         renderBackground();
+        glPopAttrib();
     }
 
     glutSwapBuffers();
@@ -233,7 +233,13 @@ int main(int argc, char** argv) {
         error("failed to initialize kinect");
         return 0;
     }
+    
+    if (!initGame()) {
+        error("failed to setup physics");
+        return 0;
+    }
     atexit(exit);
+    
     
     initGlut(argc,argv);
     image.resize(kwidth, kheight);

@@ -64,4 +64,6 @@ struct KinectUser {
     bool        tracking;
 };
 
+KinectUser& getKinectUser();
+
 #endif
