@@ -17,7 +17,10 @@ void KinectDriver::setup(int index)
 	libusb_init(&ctx);
 	libusb_device **devs; //pointer to pointer of device, used to retrieve a list of devices
 	ssize_t cnt = libusb_get_device_list (ctx, &devs); //get the list of devices
-    if (!error_if_not_va(cnt >= 0, "No device on USB")) return;
+    if (!error_if_not_va(cnt >= 0, "No device on USB")) {
+        ctx = 0;
+        return;
+    }
 	
 	int nr_mot(0);
 	for (int i = 0; i < cnt; ++i)
@@ -91,16 +94,17 @@ void KinectDriver::update()
 
 void KinectDriver::setTiltAngle(int angle)
 {
-	
-	angle = clamp(angle, -30, 30); // just to make super sure...
-	
-	uint8_t empty[0x1];
-	
-	angle = (angle<MIN_TILT_ANGLE) ? MIN_TILT_ANGLE : ((angle>MAX_TILT_ANGLE) ? MAX_TILT_ANGLE : angle);
-	angle = angle * 2;
-	const int ret = libusb_control_transfer(dev, 0x40, 0x31, (uint16_t)angle, 0x0, empty, 0x0, 0);
-    error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
-	//tilt_angle = angle;
+	if (ctx) {
+        angle = clamp(angle, -30, 30); // just to make super sure...
+        
+        uint8_t empty[0x1];
+        
+        angle = (angle<MIN_TILT_ANGLE) ? MIN_TILT_ANGLE : ((angle>MAX_TILT_ANGLE) ? MAX_TILT_ANGLE : angle);
+        angle = angle * 2;
+        const int ret = libusb_control_transfer(dev, 0x40, 0x31, (uint16_t)angle, 0x0, empty, 0x0, 0);
+        error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
+        //tilt_angle = angle;
+    }
 }
 
 int KinectDriver::getTiltAngle() {
@@ -113,9 +117,11 @@ vec3f KinectDriver::getAccelerometers() {
 
 void KinectDriver::setLedOption(uint16_t option)
 {
-	uint8_t empty[0x1];
-	const int ret = libusb_control_transfer(dev, 0x40, 0x06, (uint16_t)option, 0x0, empty, 0x0, 0);
-    error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
+    if (ctx) {
+        uint8_t empty[0x1];
+        const int ret = libusb_control_transfer(dev, 0x40, 0x06, (uint16_t)option, 0x0, empty, 0x0, 0);
+        error_if_not_va(ret == 0, "Error in setting tilt angle, libusb_control_transfer returned %i", ret);
+    }
 }
 
 void KinectDriver::shutDown() {

@@ -22,20 +22,6 @@ void gameLogic() {
 
 
 void drawUser(KinectUser &user) {
-//    glPushMatrix();
-//    
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
-//    
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-//    glScalef(0.2, 0.2, 0.2);
-//    glTranslated(user.center3D.X, user.center3D.Y, 0);
-//    
-//    getKinectUser().glDraw();
-//    
-//    glPopMatrix();
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -67,6 +53,6 @@ void drawGameBackground() {
 }
 
 void drawGame() {
-    drawGameBackground();
-    drawUser(getKinectUser());
+    //drawGameBackground();
+    
 }
