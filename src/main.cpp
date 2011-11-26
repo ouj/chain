@@ -149,9 +149,7 @@ void renderSkeleton(XnUserID userId) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    xn::DepthMetaData depthMD;
-    getDepthGenerator().GetMetaData(depthMD);
-    glOrtho(0, depthMD.XRes(), depthMD.YRes(), 0, -1.0, 1.0);
+    glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
     getKinectUser().glDraw();
     glPopMatrix();
 }

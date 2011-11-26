@@ -30,6 +30,7 @@ struct KinectUser {
     KinectUser();
     void update(xn::UserGenerator &user, xn::DepthGenerator &depth, XnUserID id);
     void updateLimb(KinectLimb& limb, xn::UserGenerator &user, xn::DepthGenerator &depth);
+    void computeBound(xn::UserGenerator &user, xn::DepthGenerator &depth);
     void glDraw();
     KinectLimb neck;
     
@@ -60,7 +61,11 @@ struct KinectUser {
 	KinectLimb  hip;
 	XnUserID    id;
     
-    XnPoint3D	center;
+    XnBoundingBox3D bbox3D;
+    XnBoundingBox3D bboxSrn;
+    
+    XnPoint3D	center3D;
+    XnPoint3D   centerSrn;
     bool        tracking;
 };
 
