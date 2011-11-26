@@ -20,7 +20,8 @@ struct KinectLimb {
     
 	XnSkeletonJoint startJoint;
 	XnSkeletonJoint endJoint;
-	XnPoint3D position[2];
+	XnPoint3D pos3D[2];
+    XnPoint3D posSrn[2];
 	bool found;
 	void glDraw();
 };

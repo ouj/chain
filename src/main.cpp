@@ -32,6 +32,8 @@ Color makecolor(XnUInt8 R, XnUInt8 G, XnUInt8 B, XnUInt8 A = 255) {
 
 Color black = makecolor(0, 0, 0);
 Color red = makecolor(255, 0, 0);
+Color green = makecolor(0, 255, 0);
+Color blue = makecolor(0, 0, 255);
 
 sarray2<Color>  image;
 sarray2<bool>   mask;
@@ -43,58 +45,140 @@ void reshape(int w, int h) {
 }
 
 
-KinectUser kinectUser;
-void display() {
-    updateKinect();
+bool getUserId(XnUserID& id) {
     XnUserID ausers[15];
     XnUInt16 nusers = 15; 
     getUserGenerator().GetUsers(ausers, nusers);
-    
-    // draw background image
-    bool hasMask = false;
     if (nusers >= 1) {
-        XnUserID userId = ausers[0];        
-        xn::SceneMetaData smd;
-        unsigned short *userPix;
-        if (getUserGenerator().GetUserPixels(userId, smd) == XN_STATUS_OK) { 
-            userPix = (unsigned short*)smd.Data();
-            hasMask = true;
-            for (int i =0 ; i < kwidth * kheight; i++) {
-                if (userPix[i] == 0) {
-                    mask[i] = false;
-                } else mask[i] = true;
-            }
-        }
+        id = ausers[0];
+        return true;
+    } else {
+        return false;
     }
-    
+}
+
+void drawQuad() {
+    glBegin(GL_QUADS);
+    glTexCoord2i(0,0);
+    glVertex2i(-1,-1);
+    glTexCoord2i(1,0);
+    glVertex2i(1,-1);
+    glTexCoord2i(1,1);
+    glVertex2i(1,1);
+    glTexCoord2i(0,1);
+    glVertex2i(-1,1);
+    glEnd();
+}
+
+static GLuint textureId = 0;
+void renderBackground() {
     const XnRGB24Pixel* cImg = getKinectColorImage();
-    const XnDepthPixel* dImg = getKinectDepthImage();
     for (int j = 0; j < kheight; j++) {
         for (int i = 0; i < kwidth; i++) {
             XnRGB24Pixel p = cImg[(kheight - j - 1) * kwidth + i];
-            XnDepthPixel d = dImg[(kheight - j - 1) * kwidth + i];
+            image.at(i, j) = makecolor(p.nRed, p.nGreen, p.nBlue);
+        }
+    }
+    
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    if(textureId == 0) {
+        glGenTextures(1, &textureId);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
+    } else {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width(), image.height(),
+                        GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
+    }
+    
+    glColor4f(1,1,1,1);
+    drawQuad();
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void renderBackground(XnUserID userId) {
+    bool hasMask = false;
+    xn::SceneMetaData smd;
+    unsigned short *userPix;
+    if (getUserGenerator().GetUserPixels(userId, smd) == XN_STATUS_OK) { 
+        userPix = (unsigned short*)smd.Data();
+        hasMask = true;
+        for (int i =0 ; i < kwidth * kheight; i++) {
+            if (userPix[i] == 0) {
+                mask[i] = false;
+            } else mask[i] = true;
+        }
+    }
+    for (int j = 0; j < kheight; j++) {
+        for (int i = 0; i < kwidth; i++) {
             if (hasMask && mask[(kheight - j - 1) * kwidth + i]) {
-                image.at(i, j) = red;
-            } else {
-                if (d > 0) image.at(i, j) = makecolor(p.nRed, p.nGreen, p.nBlue);
-                else image.at(i, j) = black;
-            }
+                image.at(i, j) = green;
+            } else image.at(i, j) = black;
         }
     }
     
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    if(textureId == 0) {
+        glGenTextures(1, &textureId);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
+    } else {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, image.width(), image.height(),
+                        GL_RGBA, GL_UNSIGNED_BYTE, &image.at(0));
+    }
+    
+    glColor4f(1,1,1,1);
+    drawQuad();
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+    
+}
+
+KinectUser kinectUser;
+void renderSkeleton(XnUserID userId) {
+    glPushMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    xn::DepthMetaData depthMD;
+    getDepthGenerator().GetMetaData(depthMD);
+    glOrtho(0, depthMD.XRes(), depthMD.YRes(), 0, -1.0, 1.0);
     // draw user
-    if (nusers >= 1) {
-        XnUserID userId = ausers[0]; 
-        if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
-            kinectUser.update(getUserGenerator(), getDepthGenerator(), userId);
-            kinectUser.glDraw();
-        }
-        
+    if (getUserGenerator().GetSkeletonCap().IsTracking(userId)) {
+        kinectUser.update(getUserGenerator(), getDepthGenerator(), userId);
+        kinectUser.glDraw();
     }
-    
+    glPopMatrix();
+}
+
+
+void display() {
+    updateKinect();
+
     glClearColor(0.5,0.5,0.5,0);
     glClear(GL_COLOR_BUFFER_BIT);
-    if (cImg) glDrawPixels(kwidth, kheight, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+    
+    XnUserID userId;
+    if (getUserId(userId)) {
+        glViewport(kwidth - 160, kheight - 120, 160, 120);
+        
+        renderBackground(userId);
+        renderSkeleton(userId);
+    } else {
+        glViewport(0, 0, kwidth, kheight);
+        renderBackground();
+    }
+
     glutSwapBuffers();
 }
 

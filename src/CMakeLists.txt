@@ -12,6 +12,8 @@ kinect.h
 kinect.cpp
 user.h
 user.cpp
+physics.h
+physics.cpp
 )
 
 set(RESOURCE

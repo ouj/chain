@@ -1,23 +1,24 @@
 #include "user.h"
+#include "debug.h"
 
 KinectLimb::KinectLimb(XnSkeletonJoint nStartJoint, XnSkeletonJoint nEndJoint) 
 : startJoint(nStartJoint), endJoint(nEndJoint) ,found(false) {
-    position[0].X = position[1].X = 0;
-    position[0].Y = position[1].Y = 0;
-    position[0].Z = position[1].Z = 0;
+    posSrn[0].X = posSrn[1].X = 0;
+    posSrn[0].Y = posSrn[1].Y = 0;
+    posSrn[0].Z = posSrn[1].Z = 0;
+    pos3D[0].X = pos3D[1].X = 0;
+    pos3D[0].Y = pos3D[1].Y = 0;
+    pos3D[0].Z = pos3D[1].Z = 0;
 }
 
 void KinectLimb::glDraw() {
-    if(!found)
-        return;
-    glPushMatrix();
+    if(!found) return;
     glLineWidth(5);
     glColor3f(1,0,0);
     glBegin(GL_LINES);
-    glVertex2i(position[0].X, position[0].Y);
-    glVertex2i(position[1].X, position[1].Y);
+    glVertex2i(posSrn[0].X, posSrn[0].Y);
+    glVertex2i(posSrn[1].X, posSrn[1].Y);
     glEnd();
-    glPopMatrix();
 }
 
 
@@ -116,8 +117,7 @@ void KinectUser::updateLimb(KinectLimb& limb, xn::UserGenerator &user, xn::Depth
 	}
 	
 	limb.found = true;
-	limb.position[0] = a.position;
-	limb.position[1] = b.position;
-	
-	depth.ConvertRealWorldToProjective(2, limb.position, limb.position);
+	limb.pos3D[0] = a.position;
+	limb.pos3D[1] = b.position;
+	depth.ConvertRealWorldToProjective(2, limb.pos3D, limb.posSrn);
 }
