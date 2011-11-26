@@ -7,4 +7,6 @@ bool setupPhysics();
 
 void simulate();
 
+void drawWorld();
+
 #endif //_PHYSICS_H_

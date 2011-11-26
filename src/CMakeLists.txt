@@ -14,8 +14,11 @@ user.h
 user.cpp
 physics.h
 physics.cpp
+render.h
+render.cpp
 game.h
 game.cpp
+dims.h
 )
 
 set(RESOURCE

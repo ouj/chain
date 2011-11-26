@@ -10,9 +10,9 @@
 #include "array.h"
 #include "kinect.h"
 #include "game.h"
+#include "physics.h"
 
-const int kwidth = XN_VGA_X_RES;
-const int kheight = XN_VGA_Y_RES;
+#include "dims.h"
 
 struct Color {
     XnUInt8 R;
@@ -73,9 +73,9 @@ void drawQuad() {
 static GLuint textureId = 0;
 void renderBackground() {
     const XnRGB24Pixel* cImg = getKinectColorImage();
-    for (int j = 0; j < kheight; j++) {
-        for (int i = 0; i < kwidth; i++) {
-            XnRGB24Pixel p = cImg[(kheight - j - 1) * kwidth + i];
+    for (int j = 0; j < WINDOW_HEIGHT; j++) {
+        for (int i = 0; i < WINDOW_WIDTH; i++) {
+            XnRGB24Pixel p = cImg[(WINDOW_HEIGHT - j - 1) * WINDOW_WIDTH + i];
             image.at(i, j) = makecolor(p.nRed, p.nGreen, p.nBlue);
         }
     }
@@ -108,15 +108,15 @@ void renderBackground(XnUserID userId) {
     if (getUserGenerator().GetUserPixels(userId, smd) == XN_STATUS_OK) { 
         userPix = (unsigned short*)smd.Data();
         hasMask = true;
-        for (int i =0 ; i < kwidth * kheight; i++) {
+        for (int i =0 ; i < WINDOW_HEIGHT * WINDOW_WIDTH; i++) {
             if (userPix[i] == 0) {
                 mask[i] = false;
             } else mask[i] = true;
         }
     }
-    for (int j = 0; j < kheight; j++) {
-        for (int i = 0; i < kwidth; i++) {
-            if (hasMask && mask[(kheight - j - 1) * kwidth + i]) {
+    for (int j = 0; j < WINDOW_HEIGHT; j++) {
+        for (int i = 0; i < WINDOW_WIDTH; i++) {
+            if (hasMask && mask[(WINDOW_HEIGHT - j - 1) * WINDOW_WIDTH + i]) {
                 image.at(i, j) = green;
             } else image.at(i, j) = black;
         }
@@ -149,33 +149,36 @@ void renderSkeleton(XnUserID userId) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
+    glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1.0, 1.0);
     getKinectUser().glDraw();
     glPopMatrix();
 }
 
 
 void display() {
-    updateKinect();
-    gameLogic();
+    //updateKinect();
+    simulate();
+    
+    //gameLogic();
     glClearColor(1.0,1.0,1.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
+    drawWorld();
     drawGame();
     
-    XnUserID userId;
-    if (getUserId(userId)) {
-        getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
-        glPushAttrib(GL_VIEWPORT_BIT);
-        glViewport(kwidth - 160, kheight - 120, 160, 120);
-        renderBackground(userId);
-        renderSkeleton(userId);
-        glPopAttrib();
-    } else {
-        glPushAttrib(GL_VIEWPORT_BIT);
-        glViewport(kwidth - 160, kheight - 120, 160, 120);
-        renderBackground();
-        glPopAttrib();
-    }
+//    XnUserID userId;
+//    if (getUserId(userId)) {
+//        getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
+//        glPushAttrib(GL_VIEWPORT_BIT);
+//        glViewport(kwidth - 160, kheight - 120, 160, 120);
+//        renderBackground(userId);
+//        renderSkeleton(userId);
+//        glPopAttrib();
+//    } else {
+//        glPushAttrib(GL_VIEWPORT_BIT);
+//        glViewport(kwidth - 160, kheight - 120, 160, 120);
+//        renderBackground();
+//        glPopAttrib();
+//    }
 
     glutSwapBuffers();
 }
@@ -204,7 +207,7 @@ void keyboard(unsigned char key, int x, int y) {
 void initGlut(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitWindowPosition(256, 128);
-    glutInitWindowSize(kwidth, kheight);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutCreateWindow("angry man");
     
@@ -218,7 +221,7 @@ void initGlut(int argc, char** argv) {
 }
 
 void run() {
-    runKinect();
+    //runKinect();
     glutMainLoop();
 }
 
@@ -227,21 +230,26 @@ void exit() {
 }
 
 int main(int argc, char** argv) {
-    if(!setupKinect()) {
-        error("failed to initialize kinect");
+//    if(!setupKinect()) {
+//        error("failed to initialize kinect");
+//        return 0;
+//    }
+  
+    if (!setupPhysics()) {
+        error("failed to setup game");
         return 0;
     }
     
     if (!initGame()) {
-        error("failed to setup physics");
+        error("failed to setup game");
         return 0;
     }
     atexit(exit);
     
     
     initGlut(argc,argv);
-    image.resize(kwidth, kheight);
-    mask.resize(kwidth, kheight);
+    image.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    mask.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     run();
 
     message("finish");

@@ -63,6 +63,9 @@ void drawUser(KinectUser &user) {
 }
 
 void drawGameBackground() {
+    glPushMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     glLineWidth(2);
     
     glColor3f(0,0,0);
@@ -74,9 +77,10 @@ void drawGameBackground() {
     glVertex2f( 1, -1);
     glVertex2f(-1, -1);
     glEnd();
+    glPopMatrix();
 }
 
 void drawGame() {
-    drawGameBackground();
+    //drawGameBackground();
     
 }
