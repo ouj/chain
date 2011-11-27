@@ -13,5 +13,6 @@ enum GameState {
 GameState& gameState();
 int& getScore();
 void addScore(int level);
+void reduceScore();
 
 #endif // _GAME_H_

@@ -13,10 +13,14 @@ int& getScore() {
 
 void addScore(int level) {
     if (level == 1) {
-        level += 10;
+        score += 10;
     } else if (level == 2) {
-        level += 20;
+        score += 20;
     } else if (level == 3) {
-        level += 50;
+        score += 50;
     } 
+}
+
+void reduceScore() {
+    score -= 100;
 }

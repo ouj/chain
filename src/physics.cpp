@@ -14,7 +14,7 @@
 #include "func.h"
 #include "game.h"
 
-#define OBJ_NUM 16
+#define OBJ_NUM 10
 
 static b2World world(b2Vec2(0.0f, -5.0f));
 static const int32 velocityIterations = 12; 
@@ -26,7 +26,8 @@ b2Body* rightHand = 0;
 b2Body* leftShoulder = 0;
 b2Body* rightShoulder = 0;
 
-b2Body* worldBox = 0;
+b2Body* worldWall = 0;
+b2Body* worldFloor = 0;
 b2Body* ball = 0;
 b2MouseJoint* leftHandJoint = 0;
 b2MouseJoint* rightHandJoint = 0;
@@ -38,11 +39,14 @@ b2Body* pointObjects[OBJ_NUM];
 #define WALL_CATEGORY   1
 #define WALL_MASK       6
 
+#define FLOOR_CATEGORY  16
+#define FLOOR_MASK      0xffff
+
 #define BALL_CATEGORY   2
 #define BALL_MASK       0xffff
 
 #define ARM_CATEGORY    4
-#define ARM_MASK        3
+#define ARM_MASK        19
 
 #define POINT_CATEGORY    8
 #define POINT_MASK        2
@@ -52,10 +56,18 @@ DebugDraw debugDraw;
 class BrickContactListener : public b2ContactListener
 {
 public:
-    BrickContactListener() { nHit = 0; }
+    BrickContactListener() { nHit = 0; dead = false; }
     void BeginContact(b2Contact* contact) {}
     
     void EndContact(b2Contact* contact) {
+        if (contact->GetFixtureA()->GetBody() == ball && 
+            contact->GetFixtureB()->GetBody() == worldFloor) {
+            dead = true;
+        } else if (contact->GetFixtureB()->GetBody() == ball && 
+                   contact->GetFixtureA()->GetBody() == worldFloor) {
+            dead = true;
+        }
+                   
         //check if fixture A was a ball
         b2Body *hit = 0;
         if (contact->GetFixtureA()->GetBody() == ball) {
@@ -70,16 +82,16 @@ public:
         if (bodyUserData) {
             bodies[nHit] = hit;
             nHit++;
-            message("contact");
         }
     }
+    bool    dead;
     int     nHit;
     b2Body* bodies[32];
 };
 
 BrickContactListener brickContactListenerInstance;
 
-void createWorldBox() {
+void createWorldWall() {
     b2BodyDef bd;
     bd.type = b2_staticBody;
     bd.position.Set(0.0f, 0.0f);
@@ -95,7 +107,7 @@ void createWorldBox() {
     bd.active = true;
     bd.gravityScale = 1.0f;
     bd.userData = 0;
-    worldBox = world.CreateBody(&bd);
+    worldWall = world.CreateBody(&bd);
     
     {
         b2FixtureDef fd;
@@ -117,7 +129,7 @@ void createWorldBox() {
         
         fd.shape = &shape;
         
-        worldBox->CreateFixture(&fd);
+        worldWall->CreateFixture(&fd);
     }
     {
         b2FixtureDef fd;
@@ -139,7 +151,7 @@ void createWorldBox() {
         
         fd.shape = &shape;
         
-        worldBox->CreateFixture(&fd);
+        worldWall->CreateFixture(&fd);
     }
     {
         b2FixtureDef fd;
@@ -161,16 +173,35 @@ void createWorldBox() {
         
         fd.shape = &shape;
         
-        worldBox->CreateFixture(&fd);
+        worldWall->CreateFixture(&fd);
     }
+}
+
+void createWorldFloor() {
+    b2BodyDef bd;
+    bd.type = b2_staticBody;
+    bd.position.Set(0.0f, 0.0f);
+    bd.angle = 0.0f;
+    bd.linearVelocity.Set(0.0f, 0.0f);
+    bd.angularVelocity = 0.0f;
+    bd.linearDamping = 0.0f;
+    bd.angularDamping = 0.0f;
+    bd.allowSleep = true;
+    bd.awake = true;
+    bd.fixedRotation = false;
+    bd.bullet = false;
+    bd.active = true;
+    bd.gravityScale = 1.0f;
+    bd.userData = 0;
+    worldFloor = world.CreateBody(&bd);
     {
         b2FixtureDef fd;
         fd.friction = 10.0f;
         fd.restitution = 0.0f;
         fd.density = 0.0f;
         fd.isSensor = bool(0);
-        fd.filter.categoryBits = WALL_CATEGORY;
-        fd.filter.maskBits = WALL_MASK;
+        fd.filter.categoryBits = FLOOR_CATEGORY;
+        fd.filter.maskBits = FLOOR_MASK;
         fd.filter.groupIndex = int16(0);
         b2EdgeShape shape;
         shape.m_radius = 0.01f;
@@ -180,14 +211,10 @@ void createWorldBox() {
         shape.m_vertex3.Set(0.0f, 0.0f);
         shape.m_hasVertex0 = bool(0);
         shape.m_hasVertex3 = bool(0);
-        
         fd.shape = &shape;
-        
-        worldBox->CreateFixture(&fd);
+        worldFloor->CreateFixture(&fd);
     }
 }
-
-
 
 void createArms() {
     {
@@ -208,7 +235,7 @@ void createArms() {
         leftHand->CreateFixture(&fd);
         
         b2MouseJointDef md;
-		md.bodyA = worldBox;
+		md.bodyA = worldWall;
 		md.bodyB = leftHand;
 		md.maxForce = 2000.0f * leftHand->GetMass();
         md.target = bd.position;
@@ -232,7 +259,7 @@ void createArms() {
         rightHand->CreateFixture(&fd);
         
         b2MouseJointDef md;
-		md.bodyA = worldBox;
+		md.bodyA = worldWall;
 		md.bodyB = rightHand;
 		md.maxForce = 2000.0f * rightHand->GetMass();
         md.target = bd.position;
@@ -292,8 +319,7 @@ void createBall() {
     b2BodyDef bd;
     bd.position.Set(WORLD_WIDTH/2, 6.0f);
     bd.type = b2_dynamicBody;
-    //bd.bullet = true;
-    bd.bullet = false;
+    bd.bullet = true;
     bd.userData = 0;
     ball = world.CreateBody(&bd);
     
@@ -302,23 +328,23 @@ void createBall() {
     
     b2FixtureDef fd;
     fd.shape = &shape;
-    fd.density = 0.0f;
+    fd.density = 1.0f;
     fd.friction = 0.0f;
     fd.filter.categoryBits = BALL_CATEGORY;
-    fd.restitution = 0.59f;
+    fd.restitution = 0.8f;
     fd.filter.maskBits = BALL_MASK;
     ball->CreateFixture(&fd);
 }
 
 void createChain(b2Body* begin, b2Body *end, int count) {
-    const float cwidth = 0.05f;
-    const float cheight = 0.025f;
+    const float cwidth = 0.1f;
+    const float cheight = 0.05f;
     b2PolygonShape shape;
     shape.SetAsBox(cwidth, cheight);
     
     b2FixtureDef fd;
     fd.shape = &shape;
-    fd.density = 50.0f;
+    fd.density = 1.0f;
     fd.friction = 0.2f;
     fd.filter.categoryBits = ARM_CATEGORY;
     fd.filter.maskBits = ARM_MASK;
@@ -341,7 +367,7 @@ void createChain(b2Body* begin, b2Body *end, int count) {
     jd.bodyA = begin;
     jd.bodyB = sb;
     jd.localAnchorA = b2Vec2(0.0f, 0.0f);
-    jd.localAnchorB = b2Vec2(-cwidth * 0.8f, 0.0f);
+    jd.localAnchorB = b2Vec2(-cwidth * 0.6f, 0.0f);
     world.CreateJoint(&jd);
     
     b2Body* prevBody = sb;
@@ -357,8 +383,8 @@ void createChain(b2Body* begin, b2Body *end, int count) {
         jd.collideConnected = false;
         jd.bodyA = prevBody;
         jd.bodyB = body;
-        jd.localAnchorA = b2Vec2(cwidth * 0.8f, 0.0f);
-        jd.localAnchorB = b2Vec2(-cwidth * 0.8f, 0.0f);
+        jd.localAnchorA = b2Vec2(cwidth * 0.6f, 0.0f);
+        jd.localAnchorB = b2Vec2(-cwidth * 0.6f, 0.0f);
         world.CreateJoint(&jd);
         prevBody = body;
     }
@@ -366,12 +392,11 @@ void createChain(b2Body* begin, b2Body *end, int count) {
     jd.collideConnected = false;
     jd.bodyA = prevBody;
     jd.bodyB = end;
-    jd.localAnchorA = b2Vec2(cwidth * 0.8f, 0.0f);
+    jd.localAnchorA = b2Vec2(cwidth * 0.6f, 0.0f);
     jd.localAnchorB = b2Vec2(0.0f, 0.0f);
     world.CreateJoint(&jd);
 }
 
-float pointsize[] = {0.5f, 0.3f, 0.2f};
 
 void createPoint() {
     b2BodyDef bd;
@@ -442,15 +467,16 @@ bool setupPhysics() {
 	//flags += b2Draw::e_pairBit;
 	//flags += b2Draw::e_centerOfMassBit;
 	debugDraw.SetFlags(flags);
-    createWorldBox();
+    createWorldWall();
+    createWorldFloor();
     createArms();
-    createChain(leftHand, rightHand, 40);
+    createChain(leftHand, rightHand, 30);
     return true;
 }
 
 static b2Vec2 convert(const XnPoint3D& pt) {
     float scaleX = WORLD_WIDTH / KINECT_WIDTH;
-    float scaleY = WORLD_WIDTH / KINECT_WIDTH;
+    float scaleY = WORLD_WIDTH / KINECT_WIDTH * 0.5f;
     b2Vec2 v = b2Vec2(pt.X * scaleX, (KINECT_HEIGHT - pt.Y) * scaleY);
     v.x = (v.x * 2) - WORLD_WIDTH / 2;
     //v.y = (v.y * 2) - WORLD_WIDTH / 2;
@@ -473,25 +499,34 @@ void simulate() {
             b2Body* b = brickContactListenerInstance.bodies[i];
             world.DestroyBody(b);
             int level = (int)(intptr_t)b->GetUserData();
+            printf("%d\n", level);
             addScore(level);
             createPoint();
         }
         brickContactListenerInstance.nHit = 0;
     }
     
-    // action
-    KinectUser& user = getKinectUser();
-    if (user.tracking) {
-        b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
-        leftHandPos = convert(user.leftLowerArm.posSrn[1]);
-        leftShoulderPos = convert(user.leftShoulder.posSrn[1]);
-        rightHandPos = convert(user.rightLowerArm.posSrn[1]);
-        rightShoulderPos = convert(user.rightShoulder.posSrn[1]);
-        leftHandJoint->SetTarget(leftHandPos);
-        rightHandJoint->SetTarget(rightHandPos);
-//        leftShoulderJoint->SetTarget(leftShoulderPos);
-//        rightShoulderJoint->SetTarget(rightShoulderPos);
-    }    
+    if (brickContactListenerInstance.dead) {
+        brickContactListenerInstance.dead = false;
+        world.DestroyBody(ball);
+        reduceScore();
+        createBall();
+    }
+    
+    if (gameState() == GS_RUNNING) {
+        KinectUser& user = getKinectUser();
+        if (user.tracking) {
+            b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
+            leftHandPos = convert(user.leftLowerArm.posSrn[1]);
+            leftShoulderPos = convert(user.leftShoulder.posSrn[1]);
+            rightHandPos = convert(user.rightLowerArm.posSrn[1]);
+            rightShoulderPos = convert(user.rightShoulder.posSrn[1]);
+            leftHandJoint->SetTarget(leftHandPos);
+            rightHandJoint->SetTarget(rightHandPos);
+            //        leftShoulderJoint->SetTarget(leftShoulderPos);
+            //        rightShoulderJoint->SetTarget(rightShoulderPos);
+        }  
+    }
 }
 
 void DrawShape(b2Fixture* fixture, const b2Transform& xf, const b2Color& color) {
@@ -549,7 +584,7 @@ void drawBody(b2Body *b, b2Color c) {
 
 void drawWorldBox() {
     glLineWidth(4.0f);
-    drawBody(worldBox, b2Color(0.5f, 0.5f, 0.3f));
+    drawBody(worldWall, b2Color(0.5f, 0.5f, 0.3f));
 }
 
 void drawArms() {
@@ -567,7 +602,7 @@ void drawWorld() {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-.2, WORLD_WIDTH+.2, -.2, WORLD_HEIGHT+.2, -1, 1);
+    glOrtho(0, WORLD_WIDTH, 0, WORLD_HEIGHT, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     

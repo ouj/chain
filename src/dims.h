@@ -1,5 +1,5 @@
-#define WINDOW_WIDTH    640
-#define WINDOW_HEIGHT   960
+#define WINDOW_WIDTH    1000
+#define WINDOW_HEIGHT   900
 
 #define KINECT_WIDTH    XN_VGA_X_RES
 #define KINECT_HEIGHT   XN_VGA_Y_RES

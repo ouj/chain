@@ -5,7 +5,7 @@
 #include <OpenGL/OpenGL.h>
 #include <GLUT/GLUT.h>
 #endif // WIN32
-
+#include "stdmath.h"
 #include "debug.h"
 #include "array.h"
 #include "kinect.h"
@@ -13,6 +13,10 @@
 #include "physics.h"
 
 #include "dims.h"
+
+int window_width = WINDOW_WIDTH;
+int window_height = WINDOW_HEIGHT;
+int window_margin = 0;
 
 struct Color {
     XnUInt8 R;
@@ -39,9 +43,10 @@ sarray2<Color>  image;
 sarray2<bool>   mask;
 int angle = 0;
 
-
 void reshape(int w, int h) {
-    glViewport(0, 0, w, h);
+    window_height = h;
+    window_width = ((float)WINDOW_WIDTH / WINDOW_HEIGHT * window_height);
+    window_margin = std::max(0.0f,(w - window_width) / 2.0f);
 }
 
 
@@ -164,27 +169,63 @@ void renderSkeleton(XnUserID userId) {
     glPopMatrix();
 }
 
+void renderScore(int x, int y) {
+    char buffer[128];
+    
+    sprintf(buffer, "Score: %d", getScore());
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	int w = glutGet(GLUT_WINDOW_WIDTH);
+	int h = glutGet(GLUT_WINDOW_HEIGHT);
+	gluOrtho2D(0, w, h, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+    
+	glColor3f(0.9f, 0.6f, 0.6f);
+	glRasterPos2i(x, y);
+	int32 length = (int32)strlen(buffer);
+	for (int32 i = 0; i < length; ++i) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, buffer[i]);
+	}
+    
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
 void display() {
     updateKinect();
     simulate();   
     glClearColor(0.0,0.0,0.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
+    glPushAttrib(GL_VIEWPORT_BIT);
+    glViewport(window_margin, 0, window_width * 0.6f, window_height);
     drawWorld();
+    glPopAttrib();
     
     XnUserID userId;
     if (getUserId(userId)) {
         getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
         glPushAttrib(GL_VIEWPORT_BIT);
-        glViewport(WINDOW_WIDTH - 160, WINDOW_HEIGHT - 120, 160, 120);
+        glViewport(window_margin + window_width * 0.6f, window_height / 3.0f, window_width * 0.4f, window_height / 3.0f);
         renderBackground(userId);
         renderSkeleton(userId);
         glPopAttrib();
-    } else {
-        glPushAttrib(GL_VIEWPORT_BIT);
-        glViewport(WINDOW_WIDTH - 160, WINDOW_HEIGHT - 120, 160, 120);
-        renderBackground();
-        glPopAttrib();
     }
+    glPushAttrib(GL_VIEWPORT_BIT);
+    glViewport(window_margin + window_width * 0.6f, window_height * 2.0f / 3.0f, window_width * 0.4f, window_height / 3.0f);
+    renderBackground();
+    glPopAttrib();
+    
+    glPushAttrib(GL_VIEWPORT_BIT);
+    glViewport(window_margin + window_width * 0.6f, 0, window_width * 0.4f, window_height / 3.0f);
+    renderScore(window_width * 0.3f, window_height / 3.0f);
+    glPopAttrib();
+    
     glutSwapBuffers();
 }
 
@@ -218,6 +259,7 @@ void initGlut(int argc, char** argv) {
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
+    glutReshapeFunc(reshape);
 }
 
 void run() {
