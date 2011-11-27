@@ -11,26 +11,30 @@
 #include "render.h"
 #include "kinect.h"
 #include "array.h"
+#include "func.h"
 
-static b2World world(b2Vec2(0.0f, -10.0f));
-static const int32 velocityIterations = 6; 
-static const int32 positionIterations = 2;
+static b2World world(b2Vec2(0.0f, -5.0f));
+static const int32 velocityIterations = 12; 
+static const int32 positionIterations = 6;
 int stepCount = 0;
 
-b2Body* leftArm = 0;
-b2Body* rightArm = 0;
+b2Body* leftHand = 0;
+b2Body* rightHand = 0;
+b2Body* leftShoulder = 0;
+b2Body* rightShoulder = 0;
+
 b2Body* worldBox = 0;
 b2Body* ball = 0;
 b2MouseJoint* leftHandJoint = 0;
 b2MouseJoint* rightHandJoint = 0;
-b2MouseJoint* leftElbowJoint = 0;
-b2MouseJoint* rightElbowJoint = 0;
+b2MouseJoint* leftShoulderJoint = 0;
+b2MouseJoint* rightShoulderJoint = 0;
 
 sarray2<b2Body*> bricks;
 
 
 #define WALL_CATEGORY   1
-#define WALL_MASK       2
+#define WALL_MASK       6
 
 #define BALL_CATEGORY   2
 #define BALL_MASK       0xffff
@@ -48,19 +52,19 @@ class BrickContactListener : public b2ContactListener
     void BeginContact(b2Contact* contact) {}
     
     void EndContact(b2Contact* contact) {
-        message("contact");
-        //check if fixture A was a ball
-        b2Body *brick = 0;
-        if (contact->GetFixtureA()->GetBody() == ball) {
-            brick = contact->GetFixtureB()->GetBody();
-        } else if (contact->GetFixtureB()->GetBody() == ball) {
-            brick = contact->GetFixtureA()->GetBody();
-        }
-        
-        void* bodyUserData = brick->GetUserData();
-        if (bodyUserData) {
-            brick->SetTransform(b2Vec2(-10, -10), 0);
-        }
+//        message("contact");
+//        //check if fixture A was a ball
+//        b2Body *brick = 0;
+//        if (contact->GetFixtureA()->GetBody() == ball) {
+//            brick = contact->GetFixtureB()->GetBody();
+//        } else if (contact->GetFixtureB()->GetBody() == ball) {
+//            brick = contact->GetFixtureA()->GetBody();
+//        }
+//        
+//        void* bodyUserData = brick->GetUserData();
+//        if (bodyUserData) {
+//            brick->SetTransform(b2Vec2(-10, -10), 0);
+//        }
     }
 };
 
@@ -178,62 +182,106 @@ void createWorldBox() {
 
 void createArms() {
     {
-        b2BodyDef leftArmDef;
-        leftArmDef.type = b2_dynamicBody; 
-        leftArmDef.position.Set(1.0f, 2.0f);
-        leftArmDef.gravityScale = 1.0f;
-        leftArmDef.userData = 0;
-        leftArm = world.CreateBody(&leftArmDef);
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody; 
+        bd.position.Set(2.0f, 4.0f);
+        bd.gravityScale = 1.0f;
+        bd.userData = 0;
+        leftHand = world.CreateBody(&bd);
         b2PolygonShape dynamicBox; 
-        dynamicBox.SetAsBox(0.8f, 0.05f);
-        b2FixtureDef fixtureDef; 
-        fixtureDef.shape = &dynamicBox;
-        fixtureDef.density = 10.0f; 
-        fixtureDef.friction = 0.0f;
-        fixtureDef.filter.categoryBits = ARM_CATEGORY;
-        fixtureDef.filter.maskBits = ARM_MASK;
-        leftArm->CreateFixture(&fixtureDef);
+        dynamicBox.SetAsBox(0.05f, 0.05f);
+        b2FixtureDef fd; 
+        fd.shape = &dynamicBox;
+        fd.density = 10.0f; 
+        fd.friction = 1.0f;
+        fd.filter.categoryBits = ARM_CATEGORY;
+        fd.filter.maskBits = ARM_MASK;
+        leftHand->CreateFixture(&fd);
         
         b2MouseJointDef md;
 		md.bodyA = worldBox;
-		md.bodyB = leftArm;
-		md.maxForce = 1000.0f * leftArm->GetMass();
-        md.target = leftArmDef.position + b2Vec2(-0.4f, 0);
+		md.bodyB = leftHand;
+		md.maxForce = 2000.0f * leftHand->GetMass();
+        md.target = bd.position;
 		leftHandJoint = (b2MouseJoint*)world.CreateJoint(&md);
-        md.target = leftArmDef.position + b2Vec2(0.4f, 0);;
-        leftElbowJoint = (b2MouseJoint*)world.CreateJoint(&md);
     }
     {
-        b2BodyDef rightArmDef;
-        rightArmDef.type = b2_dynamicBody; 
-        rightArmDef.position.Set(4.0f, 2.0f);
-        rightArmDef.gravityScale = 1.0f;
-        rightArmDef.userData = 0;
-        rightArm = world.CreateBody(&rightArmDef);
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody; 
+        bd.position.Set(5.0f, 4.0f);
+        bd.gravityScale = 1.0f;
+        bd.userData = 0;
+        rightHand = world.CreateBody(&bd);
         b2PolygonShape dynamicBox; 
-        dynamicBox.SetAsBox(0.8f, 0.05f);
-        b2FixtureDef fixtureDef; 
-        fixtureDef.shape = &dynamicBox;
-        fixtureDef.density = 10.0f; 
-        fixtureDef.friction = 0.0f;
-        fixtureDef.filter.categoryBits = ARM_CATEGORY;
-        fixtureDef.filter.maskBits = ARM_MASK;
-        rightArm->CreateFixture(&fixtureDef);
+        dynamicBox.SetAsBox(0.05f, 0.05f);
+        b2FixtureDef fd; 
+        fd.shape = &dynamicBox;
+        fd.density = 10.0f; 
+        fd.friction = 1.0f;
+        fd.filter.categoryBits = ARM_CATEGORY;
+        fd.filter.maskBits = ARM_MASK;
+        rightHand->CreateFixture(&fd);
         
         b2MouseJointDef md;
 		md.bodyA = worldBox;
-		md.bodyB = rightArm;
-		md.maxForce = 1000.0f * rightArm->GetMass();
-        md.target = rightArmDef.position + b2Vec2(0.4f, 0);
+		md.bodyB = rightHand;
+		md.maxForce = 2000.0f * rightHand->GetMass();
+        md.target = bd.position;
 		rightHandJoint = (b2MouseJoint*)world.CreateJoint(&md);
-        md.target = rightArmDef.position + b2Vec2(-0.4f, 0);
-        rightElbowJoint = (b2MouseJoint*)world.CreateJoint(&md);
+    }
+    {
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody; 
+        bd.position.Set(3.0f, 4.0f);
+        bd.gravityScale = 1.0f;
+        bd.userData = 0;
+        leftShoulder = world.CreateBody(&bd);
+        b2PolygonShape dynamicBox; 
+        dynamicBox.SetAsBox(0.05f, 0.05f);
+        b2FixtureDef fd; 
+        fd.shape = &dynamicBox;
+        fd.density = 10.0f; 
+        fd.friction = 1.0f;
+        fd.filter.categoryBits = ARM_CATEGORY;
+        fd.filter.maskBits = ARM_MASK;
+        leftShoulder->CreateFixture(&fd);
+        
+        b2MouseJointDef md;
+		md.bodyA = worldBox;
+		md.bodyB = leftShoulder;
+		md.maxForce = 2000.0f * leftShoulder->GetMass();
+        md.target = bd.position;
+		leftShoulderJoint = (b2MouseJoint*)world.CreateJoint(&md);
+    }
+    {
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody; 
+        bd.position.Set(4.0f, 4.0f);
+        bd.gravityScale = 1.0f;
+        bd.userData = 0;
+        rightShoulder = world.CreateBody(&bd);
+        b2PolygonShape dynamicBox; 
+        dynamicBox.SetAsBox(0.05f, 0.05f);
+        b2FixtureDef fd; 
+        fd.shape = &dynamicBox;
+        fd.density = 10.0f; 
+        fd.friction = 1.0f;
+        fd.filter.categoryBits = ARM_CATEGORY;
+        fd.filter.maskBits = ARM_MASK;
+        rightShoulder->CreateFixture(&fd);
+        
+        b2MouseJointDef md;
+		md.bodyA = worldBox;
+		md.bodyB = rightShoulder;
+		md.maxForce = 2000.0f * rightHand->GetMass();
+        md.target = bd.position;
+		rightShoulderJoint = (b2MouseJoint*)world.CreateJoint(&md);
     }
 }
 
 void createBall() {
     b2BodyDef bd;
-    bd.position.Set(1.0f, 2.0f);
+    bd.position.Set(WORLD_WIDTH/2, 6.0f);
     bd.type = b2_dynamicBody;
     //bd.bullet = true;
     bd.bullet = false;
@@ -289,6 +337,67 @@ void createBricks() {
     }
 }
 
+void createChain(b2Body* begin, b2Body *end, int count) {
+    const float cwidth = 0.05f;
+    const float cheight = 0.025f;
+    b2PolygonShape shape;
+    shape.SetAsBox(cwidth, cheight);
+    
+    b2FixtureDef fd;
+    fd.shape = &shape;
+    fd.density = 50.0f;
+    fd.friction = 0.2f;
+    fd.filter.categoryBits = ARM_CATEGORY;
+    fd.filter.maskBits = ARM_MASK;
+    
+    b2Vec2 p = begin->GetPosition();
+    
+    b2BodyDef bd;
+    bd.type = b2_dynamicBody;
+    bd.position.Set(p.x + cwidth, p.y);
+    b2Body* sb = world.CreateBody(&bd);
+    sb->CreateFixture(&fd);
+    
+    b2RevoluteJointDef jd;
+    jd.collideConnected = false;
+    jd.enableLimit = true;
+    jd.maxMotorTorque = 5.0f;
+    jd.motorSpeed = 0.0f;
+    jd.enableMotor = true;
+    
+    jd.bodyA = begin;
+    jd.bodyB = sb;
+    jd.localAnchorA = b2Vec2(0.0f, 0.0f);
+    jd.localAnchorB = b2Vec2(-cwidth * 0.8f, 0.0f);
+    world.CreateJoint(&jd);
+    
+    b2Body* prevBody = sb;
+    
+    for (int i = 0; i < count; i++) {
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody;
+        bd.position.Set(p.x + cwidth * i, p.y);
+        b2Body* body = world.CreateBody(&bd);
+        body->CreateFixture(&fd);
+        
+        b2RevoluteJointDef jd;
+        jd.collideConnected = false;
+        jd.bodyA = prevBody;
+        jd.bodyB = body;
+        jd.localAnchorA = b2Vec2(cwidth * 0.8f, 0.0f);
+        jd.localAnchorB = b2Vec2(-cwidth * 0.8f, 0.0f);
+        world.CreateJoint(&jd);
+        prevBody = body;
+    }
+    
+    jd.collideConnected = false;
+    jd.bodyA = prevBody;
+    jd.bodyB = end;
+    jd.localAnchorA = b2Vec2(cwidth * 0.8f, 0.0f);
+    jd.localAnchorB = b2Vec2(0.0f, 0.0f);
+    world.CreateJoint(&jd);
+}
+
 bool setupPhysics() {
     //world.SetAllowSleeping(true);
     world.SetDebugDraw(&debugDraw);
@@ -296,14 +405,17 @@ bool setupPhysics() {
     uint32 flags = 0;
 	flags += b2Draw::e_shapeBit;
 	flags += b2Draw::e_jointBit;
-	flags += b2Draw::e_aabbBit;
+	//flags += b2Draw::e_aabbBit;
 	flags += b2Draw::e_pairBit;
 	flags += b2Draw::e_centerOfMassBit;
 	debugDraw.SetFlags(flags);
     createWorldBox();
     createArms();
     createBall();
-    createBricks();
+    createChain(leftHand, leftShoulder, 20);
+    createChain(leftShoulder, rightShoulder, 10);
+    createChain(rightShoulder, rightHand, 20);
+    //createBricks();
     return true;
 }
 
@@ -375,8 +487,8 @@ void drawWorldBox() {
 
 void drawArms() {
     glLineWidth(1.0f);
-    drawBody(leftArm, b2Color(0.1f, 0.5f, 0.3f));
-    drawBody(rightArm, b2Color(0.1f, 0.5f, 0.8f));
+    drawBody(leftHand, b2Color(0.1f, 0.5f, 0.3f));
+    drawBody(rightHand, b2Color(0.1f, 0.5f, 0.8f));
 }
 
 void drawBall() {
@@ -410,20 +522,13 @@ void drawWorld() {
         leftHand = convert(user.leftLowerArm.posSrn[1]);
         rightElbow = convert(user.rightLowerArm.posSrn[0]);
         rightHand = convert(user.rightLowerArm.posSrn[1]);
-        b2Vec2 leftArmPos = (leftElbow + leftHand);
-        leftArmPos *= 0.5f;
-        b2Vec2 rightArmPos = rightElbow + rightHand;
-        rightArmPos *= 0.5f;
-//        leftArm->SetTransform(leftArmPos, 0.0f);
-//        rightArm->SetTransform(rightArmPos, 0.0f);
-        leftElbowJoint->SetTarget(leftElbow);
         leftHandJoint->SetTarget(leftHand);
-        rightElbowJoint->SetTarget(rightElbow);
         rightHandJoint->SetTarget(rightHand);
+        glColor3b(1, 0, 0);
         glPointSize(10.0);
         glBegin(GL_POINTS);
-        glVertex2f(leftArmPos.x, leftArmPos.y);
-        glVertex2f(rightArmPos.x, rightArmPos.y);
+        glVertex2f(rightHand.x, rightHand.y);
+        glVertex2f(leftHand.x, leftHand.y);
 //        glVertex2f(leftElbow.x, leftElbow.y);
 //        glVertex2f(leftHand.x, leftHand.y);
 //        glVertex2f(rightElbow.x, rightElbow.y);

@@ -166,12 +166,10 @@ void renderSkeleton(XnUserID userId) {
 
 void display() {
     updateKinect();
-    simulate();    
-    //gameLogic();
+    simulate();   
     glClearColor(1.0,1.0,1.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
     drawWorld();
-    drawGame();
     
     XnUserID userId;
     if (getUserId(userId)) {
