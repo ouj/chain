@@ -167,7 +167,7 @@ void renderSkeleton(XnUserID userId) {
 void display() {
     updateKinect();
     simulate();   
-    glClearColor(1.0,1.0,1.0,0);
+    glClearColor(0.0,0.0,0.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
     drawWorld();
     
@@ -215,37 +215,30 @@ void initGlut(int argc, char** argv) {
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutCreateWindow("angry man");
-    
-    //glutIgnoreKeyRepeat(1);
-    
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
-    //glutMouseFunc(mouse);
-    //glutMotionFunc(motion);
     glutIdleFunc(idle);
 }
 
 void run() {
+    gameState() = GS_CALI;
     runKinect();
     glutMainLoop();
 }
 
 void exit() {
+    gameState() = GS_STOP;
     cleanupKinect();
 }
 
 int main(int argc, char** argv) {
+    gameState() = GS_INIT;
     if(!setupKinect()) {
         error("failed to initialize kinect");
         return 0;
     }
   
     if (!setupPhysics()) {
-        error("failed to setup game");
-        return 0;
-    }
-    
-    if (!initGame()) {
         error("failed to setup game");
         return 0;
     }

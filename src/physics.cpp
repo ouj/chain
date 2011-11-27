@@ -12,6 +12,9 @@
 #include "kinect.h"
 #include "array.h"
 #include "func.h"
+#include "game.h"
+
+#define OBJ_NUM 16
 
 static b2World world(b2Vec2(0.0f, -5.0f));
 static const int32 velocityIterations = 12; 
@@ -20,18 +23,15 @@ int stepCount = 0;
 
 b2Body* leftHand = 0;
 b2Body* rightHand = 0;
-b2Body* leftShoulder = 0;
-b2Body* rightShoulder = 0;
+b2Body* neck = 0;
 
 b2Body* worldBox = 0;
 b2Body* ball = 0;
 b2MouseJoint* leftHandJoint = 0;
 b2MouseJoint* rightHandJoint = 0;
-b2MouseJoint* leftShoulderJoint = 0;
-b2MouseJoint* rightShoulderJoint = 0;
+b2MouseJoint* neckJoint = 0;
 
-sarray2<b2Body*> bricks;
-
+b2Body* pointObjects[OBJ_NUM];
 
 #define WALL_CATEGORY   1
 #define WALL_MASK       6
@@ -40,32 +40,39 @@ sarray2<b2Body*> bricks;
 #define BALL_MASK       0xffff
 
 #define ARM_CATEGORY    4
-#define ARM_MASK        0xffff
+#define ARM_MASK        3
 
-#define BRICK_CATEGORY    8
-#define BRICK_MASK        0xffff
+#define POINT_CATEGORY    8
+#define POINT_MASK        2
 
 DebugDraw debugDraw;
 
 class BrickContactListener : public b2ContactListener
 {
+public:
+    BrickContactListener() { nHit = 0; }
     void BeginContact(b2Contact* contact) {}
     
     void EndContact(b2Contact* contact) {
-//        message("contact");
-//        //check if fixture A was a ball
-//        b2Body *brick = 0;
-//        if (contact->GetFixtureA()->GetBody() == ball) {
-//            brick = contact->GetFixtureB()->GetBody();
-//        } else if (contact->GetFixtureB()->GetBody() == ball) {
-//            brick = contact->GetFixtureA()->GetBody();
-//        }
-//        
-//        void* bodyUserData = brick->GetUserData();
-//        if (bodyUserData) {
-//            brick->SetTransform(b2Vec2(-10, -10), 0);
-//        }
+        //check if fixture A was a ball
+        b2Body *hit = 0;
+        if (contact->GetFixtureA()->GetBody() == ball) {
+            hit = contact->GetFixtureB()->GetBody();
+        } else if (contact->GetFixtureB()->GetBody() == ball) {
+            hit = contact->GetFixtureA()->GetBody();
+        } else {
+            return;
+        }
+        
+        void* bodyUserData = hit->GetUserData();
+        if (bodyUserData) {
+            bodies[nHit] = hit;
+            nHit++;
+            message("contact");
+        }
     }
+    int     nHit;
+    b2Body* bodies[32];
 };
 
 BrickContactListener brickContactListenerInstance;
@@ -235,7 +242,7 @@ void createArms() {
         bd.position.Set(3.0f, 4.0f);
         bd.gravityScale = 1.0f;
         bd.userData = 0;
-        leftShoulder = world.CreateBody(&bd);
+        neck = world.CreateBody(&bd);
         b2PolygonShape dynamicBox; 
         dynamicBox.SetAsBox(0.05f, 0.05f);
         b2FixtureDef fd; 
@@ -244,38 +251,14 @@ void createArms() {
         fd.friction = 1.0f;
         fd.filter.categoryBits = ARM_CATEGORY;
         fd.filter.maskBits = ARM_MASK;
-        leftShoulder->CreateFixture(&fd);
+        neck->CreateFixture(&fd);
         
         b2MouseJointDef md;
 		md.bodyA = worldBox;
-		md.bodyB = leftShoulder;
-		md.maxForce = 2000.0f * leftShoulder->GetMass();
+		md.bodyB = neck;
+		md.maxForce = 2000.0f * neck->GetMass();
         md.target = bd.position;
-		leftShoulderJoint = (b2MouseJoint*)world.CreateJoint(&md);
-    }
-    {
-        b2BodyDef bd;
-        bd.type = b2_dynamicBody; 
-        bd.position.Set(4.0f, 4.0f);
-        bd.gravityScale = 1.0f;
-        bd.userData = 0;
-        rightShoulder = world.CreateBody(&bd);
-        b2PolygonShape dynamicBox; 
-        dynamicBox.SetAsBox(0.05f, 0.05f);
-        b2FixtureDef fd; 
-        fd.shape = &dynamicBox;
-        fd.density = 10.0f; 
-        fd.friction = 1.0f;
-        fd.filter.categoryBits = ARM_CATEGORY;
-        fd.filter.maskBits = ARM_MASK;
-        rightShoulder->CreateFixture(&fd);
-        
-        b2MouseJointDef md;
-		md.bodyA = worldBox;
-		md.bodyB = rightShoulder;
-		md.maxForce = 2000.0f * rightHand->GetMass();
-        md.target = bd.position;
-		rightShoulderJoint = (b2MouseJoint*)world.CreateJoint(&md);
+		neckJoint = (b2MouseJoint*)world.CreateJoint(&md);
     }
 }
 
@@ -296,45 +279,9 @@ void createBall() {
     fd.density = 0.0f;
     fd.friction = 0.0f;
     fd.filter.categoryBits = BALL_CATEGORY;
-    fd.restitution = 0.9f;
+    fd.restitution = 0.59f;
     fd.filter.maskBits = BALL_MASK;
     ball->CreateFixture(&fd);
-}
-
-void createBricks() {
-    float bwidth = WORLD_WIDTH / 10;
-    float bheight = bwidth * 0.5f;
-    
-    bricks.resize(8, 5);
-    for (int j = 0; j < bricks.height(); j++) {
-        for (int i = 0; i < bricks.width(); i++) {
-            b2BodyDef bd;
-            bd.type = b2_staticBody;
-            bd.position.Set(bwidth * 1.5f + i * bwidth, (WORLD_HEIGHT - (bheight * 1.5f + j * bheight)));
-            bd.angle = 0.0f;
-            bd.linearVelocity.Set(0.0f, 0.0f);
-            bd.angularVelocity = 0.0f;
-            bd.linearDamping = 0.0f;
-            bd.angularDamping = 0.0f;
-            bd.allowSleep = true;
-            bd.awake = true;
-            bd.fixedRotation = false;
-            bd.bullet = false;
-            bd.active = true;
-            bd.gravityScale = 1.0f;
-            bd.userData = (void*)1;
-            bricks.at(i, j) = world.CreateBody(&bd);
-            b2PolygonShape brickBox; 
-            brickBox.SetAsBox(bwidth / 2, bheight / 2);
-            b2FixtureDef fd; 
-            fd.shape = &brickBox;
-            fd.density = 10.0f; 
-            fd.friction = 0.0f;
-            fd.filter.categoryBits = BRICK_CATEGORY;
-            fd.filter.maskBits = BRICK_MASK;
-            bricks.at(i, j)->CreateFixture(&fd);
-        }
-    }
 }
 
 void createChain(b2Body* begin, b2Body *end, int count) {
@@ -398,6 +345,66 @@ void createChain(b2Body* begin, b2Body *end, int count) {
     world.CreateJoint(&jd);
 }
 
+float pointsize[] = {0.5f, 0.3f, 0.2f};
+
+void createPoint() {
+    b2BodyDef bd;
+    
+    float x = (rand() / (float)INT_MAX) * WORLD_WIDTH;
+    float y = WORLD_HEIGHT / 2.0f + ((rand() / (float)INT_MAX) * WORLD_HEIGHT / 2.0f);
+    
+    bd.position.Set(x, y);
+    bd.type = b2_staticBody;
+    bd.bullet = false;
+    bd.userData = (void*)1;
+    bd.angle = 0.0f;
+    bd.linearVelocity.Set(0.0f, 0.0f);
+    bd.angularVelocity = 0.0f;
+    bd.linearDamping = 0.0f;
+    bd.angularDamping = 0.0f;
+    bd.allowSleep = true;
+    bd.awake = true;
+    bd.fixedRotation = false;
+    bd.bullet = false;
+    bd.active = true;
+    bd.gravityScale = 1.0f;
+    bd.userData = 0;
+    
+    b2Body* body = world.CreateBody(&bd);
+    
+    b2CircleShape shape;
+    int level = 0;
+    float r = (rand() / (float)INT_MAX);
+    if (r < 0.5f) {
+        shape.m_radius = 0.5f;
+        level = 1;
+    } else if (r < 0.8f) {
+        shape.m_radius = 0.3f;
+        level = 2;
+    } else {
+        shape.m_radius = 0.2f;
+        level = 3;
+    }
+    
+    
+    b2FixtureDef fd;
+    fd.shape = &shape;
+    fd.density = 0.0f;
+    fd.friction = 0.0f;
+    fd.filter.categoryBits = POINT_CATEGORY;
+    fd.restitution = 0.5f;
+    fd.filter.maskBits = POINT_MASK;
+    body->CreateFixture(&fd); 
+    body->SetUserData((void*)level);
+}
+
+void addBalls() {
+    createBall();
+    for (int i = 0; i < OBJ_NUM; i++) {
+        createPoint();
+    }
+}
+
 bool setupPhysics() {
     //world.SetAllowSleeping(true);
     world.SetDebugDraw(&debugDraw);
@@ -406,25 +413,58 @@ bool setupPhysics() {
 	flags += b2Draw::e_shapeBit;
 	flags += b2Draw::e_jointBit;
 	//flags += b2Draw::e_aabbBit;
-	flags += b2Draw::e_pairBit;
-	flags += b2Draw::e_centerOfMassBit;
+	//flags += b2Draw::e_pairBit;
+	//flags += b2Draw::e_centerOfMassBit;
 	debugDraw.SetFlags(flags);
     createWorldBox();
     createArms();
-    createBall();
-    createChain(leftHand, leftShoulder, 20);
-    createChain(leftShoulder, rightShoulder, 10);
-    createChain(rightShoulder, rightHand, 20);
-    //createBricks();
+    createChain(leftHand, neck, 25);
+    createChain(neck, rightHand, 25);
     return true;
+}
+
+static b2Vec2 convert(const XnPoint3D& pt) {
+    float scaleX = WORLD_WIDTH / KINECT_WIDTH;
+    float scaleY = WORLD_WIDTH / KINECT_WIDTH;
+    b2Vec2 v = b2Vec2(pt.X * scaleX, (KINECT_HEIGHT - pt.Y) * scaleY);
+    v.x = (v.x * 2) - WORLD_WIDTH / 2;
+    //v.y = (v.y * 2) - WORLD_WIDTH / 2;
+    return v;
 }
 
 
 void simulate() {
+    if (gameState() == GS_BEGIN) {
+        addBalls();
+        gameState() = GS_RUNNING;
+    }
     float32 timeStep = 1.0f / 60.0f;
     world.Step(timeStep, velocityIterations, positionIterations); 
     if (timeStep > 0.0f)
-		++stepCount;
+        ++stepCount;
+    // handle collision
+    if (brickContactListenerInstance.nHit > 0) {
+        for (int i = 0; i < brickContactListenerInstance.nHit; i++) {
+            b2Body* b = brickContactListenerInstance.bodies[i];
+            world.DestroyBody(b);
+            int level = (int)(intptr_t)b->GetUserData();
+            addScore(level);
+            createPoint();
+        }
+        brickContactListenerInstance.nHit = 0;
+    }
+    
+    // action
+    KinectUser& user = getKinectUser();
+    if (user.tracking) {
+        b2Vec2 leftHandPos, rightHandPos, neckPos;
+        leftHandPos = convert(user.leftLowerArm.posSrn[1]);
+        neckPos = convert(user.neck.posSrn[1]);
+        rightHandPos = convert(user.rightLowerArm.posSrn[1]);
+        leftHandJoint->SetTarget(leftHandPos);
+        rightHandJoint->SetTarget(rightHandPos);
+        neckJoint->SetTarget(neckPos);
+    }    
 }
 
 void DrawShape(b2Fixture* fixture, const b2Transform& xf, const b2Color& color) {
@@ -496,12 +536,6 @@ void drawBall() {
     drawBody(ball, b2Color(0.6, 0.6, 0.2));
 }
 
-static b2Vec2 convert(const XnPoint3D& pt) {
-    float scaleX = WORLD_WIDTH / KINECT_WIDTH * 1.5f;
-    float scaleY = WORLD_WIDTH / KINECT_WIDTH * 1.5f;
-    return b2Vec2(pt.X * scaleX, (KINECT_HEIGHT - pt.Y) * scaleY);
-}
-
 void drawWorld() {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -514,27 +548,14 @@ void drawWorld() {
 //    drawArms();
 //    drawBall();
     
-    KinectUser& user = getKinectUser();
-    if (user.tracking) {
-        b2Vec2 leftElbow, rightElbow;
-        b2Vec2 leftHand, rightHand;
-        leftElbow = convert(user.leftLowerArm.posSrn[0]);
-        leftHand = convert(user.leftLowerArm.posSrn[1]);
-        rightElbow = convert(user.rightLowerArm.posSrn[0]);
-        rightHand = convert(user.rightLowerArm.posSrn[1]);
-        leftHandJoint->SetTarget(leftHand);
-        rightHandJoint->SetTarget(rightHand);
-        glColor3b(1, 0, 0);
-        glPointSize(10.0);
-        glBegin(GL_POINTS);
-        glVertex2f(rightHand.x, rightHand.y);
-        glVertex2f(leftHand.x, leftHand.y);
-//        glVertex2f(leftElbow.x, leftElbow.y);
-//        glVertex2f(leftHand.x, leftHand.y);
-//        glVertex2f(rightElbow.x, rightElbow.y);
-//        glVertex2f(rightHand.x, rightHand.y);
-        glEnd();
-    }
+
+    glColor3b(1, 0, 0);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex2f(rightHandJoint->GetTarget().x, rightHandJoint->GetTarget().y);
+    glVertex2f(leftHandJoint->GetTarget().x, leftHandJoint->GetTarget().y);
+    glVertex2f(neckJoint->GetTarget().x, neckJoint->GetTarget().y);
+    glEnd();
     world.DrawDebugData();
     
     glPopMatrix();

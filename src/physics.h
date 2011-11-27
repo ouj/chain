@@ -5,6 +5,8 @@
 
 bool setupPhysics();
 
+void addBalls();
+
 void simulate();
 
 void drawWorld();

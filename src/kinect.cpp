@@ -1,5 +1,6 @@
 #include "kinect.h"
 #include "debug.h"
+#include "game.h"
 
 static KinectDriver         _driver;
 static xn::Context          _context;
@@ -142,6 +143,7 @@ void XN_CALLBACK_TYPE User_LostUser(xn::UserGenerator& generator, XnUserID nId,
     message_va("lost user %d\n", nId);
 	generator.GetSkeletonCap().Reset(nId);
     _driver.setLedOption(LED_BLINK_RED_YELLOW);
+    gameState() = GS_LOST;
 }
 
 void XN_CALLBACK_TYPE Pose_Detected(xn::PoseDetectionCapability& pose, 
@@ -166,6 +168,7 @@ void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUser
         message_va("user %d calibrated", nId);
         generator->GetSkeletonCap().StartTracking(nId);
         _driver.setLedOption(LED_BLINK_GREEN);
+        gameState() = GS_BEGIN;
     } else {
         message_va("failed to calibrate user %d", nId);
         generator->GetPoseDetectionCap().StartPoseDetection(POSE_TO_USE, nId);
