@@ -6,4 +6,4 @@
 
 #define WORLD_WIDTH    6.4
 #define WORLD_HEIGHT   9.6
-#define WORLD_BOTTOM   1.0
+#define WORLD_BOTTOM   0.0
