@@ -73,9 +73,9 @@ void drawQuad() {
 static GLuint textureId = 0;
 void renderBackground() {
     const XnRGB24Pixel* cImg = getKinectColorImage();
-    for (int j = 0; j < WINDOW_HEIGHT; j++) {
-        for (int i = 0; i < WINDOW_WIDTH; i++) {
-            XnRGB24Pixel p = cImg[(WINDOW_HEIGHT - j - 1) * WINDOW_WIDTH + i];
+    for (int j = 0; j < KINECT_HEIGHT; j++) {
+        for (int i = 0; i < KINECT_WIDTH; i++) {
+            XnRGB24Pixel p = cImg[(KINECT_HEIGHT - j - 1) * KINECT_WIDTH + i];
             image.at(i, j) = makecolor(p.nRed, p.nGreen, p.nBlue);
         }
     }
@@ -114,15 +114,15 @@ void renderBackground(XnUserID userId) {
     if (getUserGenerator().GetUserPixels(userId, smd) == XN_STATUS_OK) { 
         userPix = (unsigned short*)smd.Data();
         hasMask = true;
-        for (int i =0 ; i < WINDOW_HEIGHT * WINDOW_WIDTH; i++) {
+        for (int i =0 ; i < KINECT_HEIGHT * KINECT_WIDTH; i++) {
             if (userPix[i] == 0) {
                 mask[i] = false;
             } else mask[i] = true;
         }
     }
-    for (int j = 0; j < WINDOW_HEIGHT; j++) {
-        for (int i = 0; i < WINDOW_WIDTH; i++) {
-            if (hasMask && mask[(WINDOW_HEIGHT - j - 1) * WINDOW_WIDTH + i]) {
+    for (int j = 0; j < KINECT_HEIGHT; j++) {
+        for (int i = 0; i < KINECT_WIDTH; i++) {
+            if (hasMask && mask[(KINECT_HEIGHT - j - 1) * KINECT_WIDTH + i]) {
                 image.at(i, j) = green;
             } else image.at(i, j) = black;
         }
@@ -159,36 +159,34 @@ void renderSkeleton(XnUserID userId) {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1.0, 1.0);
+    glOrtho(0, KINECT_WIDTH, KINECT_HEIGHT, 0, -1.0, 1.0);
     getKinectUser().glDraw();
     glPopMatrix();
 }
 
 void display() {
-    //updateKinect();
-    simulate();
-    
+    updateKinect();
+    simulate();    
     //gameLogic();
     glClearColor(1.0,1.0,1.0,0);
     glClear(GL_COLOR_BUFFER_BIT);
     drawWorld();
     drawGame();
     
-//    XnUserID userId;
-//    if (getUserId(userId)) {
-//        getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
-//        glPushAttrib(GL_VIEWPORT_BIT);
-//        glViewport(kwidth - 160, kheight - 120, 160, 120);
-//        renderBackground(userId);
-//        renderSkeleton(userId);
-//        glPopAttrib();
-//    } else {
-//        glPushAttrib(GL_VIEWPORT_BIT);
-//        glViewport(kwidth - 160, kheight - 120, 160, 120);
-//        renderBackground();
-//        glPopAttrib();
-//    }
-
+    XnUserID userId;
+    if (getUserId(userId)) {
+        getKinectUser().update(getUserGenerator(), getDepthGenerator(), userId);
+        glPushAttrib(GL_VIEWPORT_BIT);
+        glViewport(WINDOW_WIDTH - 160, WINDOW_HEIGHT - 120, 160, 120);
+        renderBackground(userId);
+        renderSkeleton(userId);
+        glPopAttrib();
+    } else {
+        glPushAttrib(GL_VIEWPORT_BIT);
+        glViewport(WINDOW_WIDTH - 160, WINDOW_HEIGHT - 120, 160, 120);
+        renderBackground();
+        glPopAttrib();
+    }
     glutSwapBuffers();
 }
 
@@ -230,7 +228,7 @@ void initGlut(int argc, char** argv) {
 }
 
 void run() {
-    //runKinect();
+    runKinect();
     glutMainLoop();
 }
 
@@ -239,10 +237,10 @@ void exit() {
 }
 
 int main(int argc, char** argv) {
-//    if(!setupKinect()) {
-//        error("failed to initialize kinect");
-//        return 0;
-//    }
+    if(!setupKinect()) {
+        error("failed to initialize kinect");
+        return 0;
+    }
   
     if (!setupPhysics()) {
         error("failed to setup game");
@@ -257,8 +255,8 @@ int main(int argc, char** argv) {
     
     
     initGlut(argc,argv);
-    image.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
-    mask.resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    image.resize(KINECT_WIDTH, KINECT_HEIGHT);
+    mask.resize(KINECT_WIDTH, KINECT_HEIGHT);
     run();
 
     message("finish");

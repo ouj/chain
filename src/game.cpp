@@ -8,9 +8,7 @@
 #endif // WIN32
 #include "kinect.h"
 #include "physics.h"
-
-const int kwidth = XN_VGA_X_RES;
-const int kheight = XN_VGA_Y_RES;
+#include "dims.h"
 
 bool initGame() {
     return true;
@@ -25,7 +23,7 @@ void drawUser(KinectUser &user) {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, kwidth, kheight, 0, -1.0, 1.0);
+    glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1.0, 1.0);
     user.glDraw();
     glPopMatrix();
 }

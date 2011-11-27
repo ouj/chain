@@ -17,6 +17,10 @@ bool setupKinect() {
     if(!error_if_not(ret == XN_STATUS_OK, "failed to init openni context"))
         return -1;
     
+    ret = _context.SetGlobalMirror(true);
+    if(!error_if_not(ret == XN_STATUS_OK, "failed to set mirror mode"))
+        return -1;
+    
     if (!initDepthGenerator(_context, _depth)) {
         error("failed to init depth genreator");
         return false;
