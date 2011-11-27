@@ -65,8 +65,8 @@ SOURCE_GROUP("Resources" FILES ${RESOURCE})
 SOURCE_GROUP("Resources\\Dynamic Libs" FILES ${DYLIB})
 SOURCE_GROUP("Resources\\Config Files" FILES ${CFG_FILES})
 
-add_executable(angryman MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB} ${CFG_FILES})
-target_link_libraries(angryman ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} ${DYLIB} ${BOX2D})
+add_executable(chain MACOSX_BUNDLE ${SOURCE} ${RESOURCE} ${DYLIB} ${CFG_FILES})
+target_link_libraries(chain ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES} ${DYLIB} ${BOX2D})
 
 SET( MACOSX_BUNDLE_INFO_STRING "Jiawei's Viewer")
 SET( MACOSX_BUNDLE_BUNDLE_VERSION "2.0.0")

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # main project name defined
-project(angryman)
+project(chain)
 
 # osx architectures
 if(NOT BUILD_NEWGCC)

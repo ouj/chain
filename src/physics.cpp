@@ -14,9 +14,10 @@
 #include "func.h"
 #include "game.h"
 
-#define OBJ_NUM 10
+#define OBJ_NUM 8
+#define CHAIN_LEN 20
 
-static b2World world(b2Vec2(0.0f, -5.0f));
+static b2World world(b2Vec2(0.0f, -3.0f));
 static const int32 velocityIterations = 12; 
 static const int32 positionIterations = 6;
 int stepCount = 0;
@@ -37,7 +38,7 @@ b2MouseJoint* rightShoulderJoint = 0;
 b2Body* pointObjects[OBJ_NUM];
 
 #define WALL_CATEGORY   1
-#define WALL_MASK       6
+#define WALL_MASK       2
 
 #define FLOOR_CATEGORY  16
 #define FLOOR_MASK      0xffff
@@ -331,7 +332,7 @@ void createBall() {
     fd.density = 1.0f;
     fd.friction = 0.0f;
     fd.filter.categoryBits = BALL_CATEGORY;
-    fd.restitution = 0.8f;
+    fd.restitution = 1.0f;
     fd.filter.maskBits = BALL_MASK;
     ball->CreateFixture(&fd);
 }
@@ -470,7 +471,7 @@ bool setupPhysics() {
     createWorldWall();
     createWorldFloor();
     createArms();
-    createChain(leftHand, rightHand, 30);
+    createChain(leftHand, rightHand, CHAIN_LEN);
     return true;
 }
 
