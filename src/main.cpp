@@ -169,11 +169,9 @@ void renderSkeleton(XnUserID userId) {
     glPopMatrix();
 }
 
-void renderScore(int x, int y) {
-    char buffer[128];
-    
-    sprintf(buffer, "Score: %d", getScore());
 
+
+void renderText(int x, int y, const char* text) {    
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -186,15 +184,21 @@ void renderScore(int x, int y) {
     
 	glColor3f(0.9f, 0.6f, 0.6f);
 	glRasterPos2i(x, y);
-	int32 length = (int32)strlen(buffer);
+	int32 length = (int32)strlen(text);
 	for (int32 i = 0; i < length; ++i) {
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, buffer[i]);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
 	}
     
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
+}
+
+void renderScore(int x, int y) {
+    char buffer[128];
+    sprintf(buffer, "Score: %d", getScore());
+    renderText(x, y, buffer);
 }
 
 void display() {
@@ -224,6 +228,10 @@ void display() {
     glPushAttrib(GL_VIEWPORT_BIT);
     glViewport(window_margin + window_width * 0.6f, 0, window_width * 0.4f, window_height / 3.0f);
     renderScore(window_width * 0.3f, window_height / 3.0f);
+    
+    if (isLostHand()) {
+        renderText(window_width * 0.3f, window_height / 4.0f, "Lost Track of Hands");
+    }
     glPopAttrib();
     
     glutSwapBuffers();

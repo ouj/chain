@@ -490,11 +490,26 @@ void simulate() {
         addBalls();
         gameState() = GS_RUNNING;
     }
-    float32 timeStep = 1.0f / 60.0f;
-    world.Step(timeStep, velocityIterations, positionIterations); 
-    if (timeStep > 0.0f)
-        ++stepCount;
-    // handle collision
+    
+    if (gameState() == GS_RUNNING) {
+        KinectUser& user = getKinectUser();
+        if (user.tracking && user.leftLowerArm.found && user.rightLowerArm.found) {      
+            b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
+            leftHandPos = convert(user.leftLowerArm.posSrn[1]);
+            rightHandPos = convert(user.rightLowerArm.posSrn[1]);
+            leftHandJoint->SetTarget(leftHandPos);
+            rightHandJoint->SetTarget(rightHandPos);
+            setLostHand(false);
+        } else setLostHand(true);
+    }
+    
+    if (!isLostHand()) {
+        float32 timeStep = 1.0f / 60.0f;
+        world.Step(timeStep, velocityIterations, positionIterations); 
+        if (timeStep > 0.0f)
+            ++stepCount;
+    }
+
     if (brickContactListenerInstance.nHit > 0) {
         for (int i = 0; i < brickContactListenerInstance.nHit; i++) {
             b2Body* b = brickContactListenerInstance.bodies[i];
@@ -513,90 +528,6 @@ void simulate() {
         reduceScore();
         createBall();
     }
-    
-    if (gameState() == GS_RUNNING) {
-        KinectUser& user = getKinectUser();
-        if (user.tracking) {
-            b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
-            leftHandPos = convert(user.leftLowerArm.posSrn[1]);
-            leftShoulderPos = convert(user.leftShoulder.posSrn[1]);
-            rightHandPos = convert(user.rightLowerArm.posSrn[1]);
-            rightShoulderPos = convert(user.rightShoulder.posSrn[1]);
-            leftHandJoint->SetTarget(leftHandPos);
-            rightHandJoint->SetTarget(rightHandPos);
-            //        leftShoulderJoint->SetTarget(leftShoulderPos);
-            //        rightShoulderJoint->SetTarget(rightShoulderPos);
-        }  
-    }
-}
-
-void DrawShape(b2Fixture* fixture, const b2Transform& xf, const b2Color& color) {
-	switch (fixture->GetType()) {
-        case b2Shape::e_circle: {
-			b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();
-            
-			b2Vec2 center = b2Mul(xf, circle->m_p);
-			float32 radius = circle->m_radius;
-			b2Vec2 axis = b2Mul(xf.q, b2Vec2(1.0f, 0.0f));
-            
-			debugDraw.DrawSolidCircle(center, radius, axis, color);
-		} break;
-        case b2Shape::e_edge: {
-			b2EdgeShape* edge = (b2EdgeShape*)fixture->GetShape();
-			b2Vec2 v1 = b2Mul(xf, edge->m_vertex1);
-			b2Vec2 v2 = b2Mul(xf, edge->m_vertex2);
-			debugDraw.DrawSegment(v1, v2, color);
-		} break;
-        case b2Shape::e_chain: {
-			b2ChainShape* chain = (b2ChainShape*)fixture->GetShape();
-			int32 count = chain->m_count;
-			const b2Vec2* vertices = chain->m_vertices;
-            
-			b2Vec2 v1 = b2Mul(xf, vertices[0]);
-			for (int32 i = 1; i < count; ++i)
-			{
-				b2Vec2 v2 = b2Mul(xf, vertices[i]);
-				debugDraw.DrawSegment(v1, v2, color);
-				debugDraw.DrawCircle(v1, 0.05f, color);
-				v1 = v2;
-			}
-		} break;
-        case b2Shape::e_polygon: {
-			b2PolygonShape* poly = (b2PolygonShape*)fixture->GetShape();
-			int32 vertexCount = poly->m_vertexCount;
-			b2Assert(vertexCount <= b2_maxPolygonVertices);
-			b2Vec2 vertices[b2_maxPolygonVertices];
-            
-			for (int32 i = 0; i < vertexCount; ++i) {
-				vertices[i] = b2Mul(xf, poly->m_vertices[i]);
-			}
-			debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
-		} break;
-        default: break;
-	}
-}
-
-void drawBody(b2Body *b, b2Color c) {
-    const b2Transform& xf = b->GetTransform();
-    for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
-        DrawShape(f, xf, c);
-    }
-}
-
-void drawWorldBox() {
-    glLineWidth(4.0f);
-    drawBody(worldWall, b2Color(0.5f, 0.5f, 0.3f));
-}
-
-void drawArms() {
-    glLineWidth(1.0f);
-    drawBody(leftHand, b2Color(0.1f, 0.5f, 0.3f));
-    drawBody(rightHand, b2Color(0.1f, 0.5f, 0.8f));
-}
-
-void drawBall() {
-    glLineWidth(1.0f);
-    drawBody(ball, b2Color(0.6, 0.6, 0.2));
 }
 
 void drawWorld() {
@@ -606,20 +537,14 @@ void drawWorld() {
     glOrtho(0, WORLD_WIDTH, 0, WORLD_HEIGHT, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
-//    drawWorldBox();
-//    drawArms();
-//    drawBall();
-    
 
     glColor3b(1, 0, 0);
     glPointSize(10.0);
     glBegin(GL_POINTS);
     glVertex2f(rightHandJoint->GetTarget().x, rightHandJoint->GetTarget().y);
     glVertex2f(leftHandJoint->GetTarget().x, leftHandJoint->GetTarget().y);
-//    glVertex2f(leftShoulderJoint->GetTarget().x, leftShoulderJoint->GetTarget().y);
-//    glVertex2f(rightShoulderJoint->GetTarget().x, rightShoulderJoint->GetTarget().y);
     glEnd();
+    
     world.DrawDebugData();
     
     glPopMatrix();

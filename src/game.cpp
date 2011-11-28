@@ -1,6 +1,10 @@
 #include "game.h"
 
 static GameState state;
+bool lostHand = false;
+
+bool isLostHand() { return lostHand; }
+void setLostHand(bool l) { lostHand = l; }
 
 GameState& gameState() {
     return state;
