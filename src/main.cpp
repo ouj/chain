@@ -229,8 +229,8 @@ void display() {
     glViewport(window_margin + window_width * 0.6f, 0, window_width * 0.4f, window_height / 3.0f);
     renderScore(window_width * 0.3f, window_height / 3.0f);
     
-    if (isLostHand()) {
-        renderText(window_width * 0.3f, window_height / 4.0f, "Lost Track of Hands");
+    if (gameState() == GS_LOST) {
+        renderText(window_width * 0.3f, window_height / 5.0f, "No Player");
     }
     glPopAttrib();
     

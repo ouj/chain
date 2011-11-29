@@ -14,7 +14,6 @@ GameState& gameState();
 int& getScore();
 void addScore(int level);
 void reduceScore();
-bool isLostHand();
-void setLostHand(bool l);
+void resetScore();
 
 #endif // _GAME_H_

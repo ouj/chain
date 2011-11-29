@@ -168,6 +168,7 @@ void XN_CALLBACK_TYPE Calibration_End(xn::SkeletonCapability& capability, XnUser
         message_va("user %d calibrated", nId);
         generator->GetSkeletonCap().StartTracking(nId);
         _driver.setLedOption(LED_BLINK_GREEN);
+        resetScore();
         gameState() = GS_BEGIN;
     } else {
         message_va("failed to calibrate user %d", nId);

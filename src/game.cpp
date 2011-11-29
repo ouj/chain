@@ -1,10 +1,6 @@
 #include "game.h"
 
 static GameState state;
-bool lostHand = false;
-
-bool isLostHand() { return lostHand; }
-void setLostHand(bool l) { lostHand = l; }
 
 GameState& gameState() {
     return state;
@@ -27,4 +23,8 @@ void addScore(int level) {
 
 void reduceScore() {
     score -= 100;
+}
+
+void resetScore() {
+    score = 0;
 }

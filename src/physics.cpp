@@ -317,6 +317,8 @@ void createArms() {
 }
 
 void createBall() {
+    if (ball) world.DestroyBody(ball);
+    
     b2BodyDef bd;
     bd.position.Set(WORLD_WIDTH/2, 6.0f);
     bd.type = b2_dynamicBody;
@@ -399,11 +401,11 @@ void createChain(b2Body* begin, b2Body *end, int count) {
 }
 
 
-void createPoint() {
+void createPoint() {    
     b2BodyDef bd;
     
     float x = (rand() / (float)INT_MAX) * WORLD_WIDTH;
-    float y = WORLD_HEIGHT / 2.0f + ((rand() / (float)INT_MAX) * WORLD_HEIGHT / 2.0f);
+    float y = WORLD_HEIGHT * 2.0f / 3.0f + ((rand() / (float)INT_MAX) * WORLD_HEIGHT / 3.0f);
     
     bd.position.Set(x, y);
     bd.type = b2_staticBody;
@@ -450,13 +452,6 @@ void createPoint() {
     body->SetUserData((void*)level);
 }
 
-void addBalls() {
-    createBall();
-    for (int i = 0; i < OBJ_NUM; i++) {
-        createPoint();
-    }
-}
-
 bool setupPhysics() {
     //world.SetAllowSleeping(true);
     world.SetDebugDraw(&debugDraw);
@@ -472,12 +467,15 @@ bool setupPhysics() {
     createWorldFloor();
     createArms();
     createChain(leftHand, rightHand, CHAIN_LEN);
+    for (int i = 0; i < OBJ_NUM; i++) {
+        createPoint();
+    }
     return true;
 }
 
 static b2Vec2 convert(const XnPoint3D& pt) {
     float scaleX = WORLD_WIDTH / KINECT_WIDTH;
-    float scaleY = WORLD_WIDTH / KINECT_WIDTH * 0.5f;
+    float scaleY = WORLD_WIDTH / KINECT_WIDTH * 0.6f;
     b2Vec2 v = b2Vec2(pt.X * scaleX, (KINECT_HEIGHT - pt.Y) * scaleY);
     v.x = (v.x * 2) - WORLD_WIDTH / 2;
     //v.y = (v.y * 2) - WORLD_WIDTH / 2;
@@ -487,23 +485,20 @@ static b2Vec2 convert(const XnPoint3D& pt) {
 
 void simulate() {
     if (gameState() == GS_BEGIN) {
-        addBalls();
+        createBall();
         gameState() = GS_RUNNING;
     }
     
-    if (gameState() == GS_RUNNING) {
-        KinectUser& user = getKinectUser();
-        if (user.tracking && user.leftLowerArm.found && user.rightLowerArm.found) {      
-            b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
-            leftHandPos = convert(user.leftLowerArm.posSrn[1]);
-            rightHandPos = convert(user.rightLowerArm.posSrn[1]);
-            leftHandJoint->SetTarget(leftHandPos);
-            rightHandJoint->SetTarget(rightHandPos);
-            setLostHand(false);
-        } else setLostHand(true);
+    KinectUser& user = getKinectUser();
+    if (user.tracking) {      
+        b2Vec2 leftHandPos, rightHandPos, leftShoulderPos, rightShoulderPos;
+        leftHandPos = convert(user.leftLowerArm.posSrn[1]);
+        rightHandPos = convert(user.rightLowerArm.posSrn[1]);
+        leftHandJoint->SetTarget(leftHandPos);
+        rightHandJoint->SetTarget(rightHandPos);
     }
     
-    if (!isLostHand()) {
+    if (gameState() == GS_RUNNING) {
         float32 timeStep = 1.0f / 60.0f;
         world.Step(timeStep, velocityIterations, positionIterations); 
         if (timeStep > 0.0f)
@@ -534,7 +529,7 @@ void drawWorld() {
     glPushMatrix();
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, WORLD_WIDTH, 0, WORLD_HEIGHT, -1, 1);
+    glOrtho(-0.1, WORLD_WIDTH+0.1, -0.1, WORLD_HEIGHT+0.1, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
