@@ -26,26 +26,21 @@ I tried very hard to make the project portable. What I mean is you should just n
 
 Build
 =====
-## Install Xcode
-Go to the app store and get Xcode. 
-
-## Install [homebrew](http://mxcl.github.com/homebrew/)
-The easiest thing to do, Paste this at a shell prompt:
+## Install Dependencies
+1. Xcode. Go to the app store and get Xcode. 
+2. [homebrew](http://mxcl.github.com/homebrew/). The easiest thing to do, Paste this at a shell prompt:
 ```
 /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 ```
-
-## Install cmake
-```
-sudo brew install cmake
-```
+3. cmake ```sudo brew install cmake```
 
 ## Create xcode project and build
-```
+1. Clone the project `git clone 'https://github.com/ouj/chain/'`
+2. Create xcode project
 cd chain
 ./cmake-xcode.sh
 ```
-Build with Xcode. You will find the chain.app under `chain/bin/Release/`
+3. Build with Xcode. You will find the chain.app under `chain/bin/Release/`
 
 ## 
 Demo
