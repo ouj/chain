@@ -32,10 +32,11 @@ Build
 ```
 /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 ```
-3. cmake ```sudo brew install cmake```
+3. Install [cmake](http://www.cmake.org/) `sudo brew install cmake`
+4. Install [git](git-scm.com/) `sudo brew install git`
 
 ## Create xcode project and build
-1. Clone the project `git clone 'https://github.com/ouj/chain/'`
+1. Clone the project `git clone 'git://github.com/ouj/chain.git'`
 2. Create xcode project. `cd chain; ./cmake-xcode.sh`
 3. Build with Xcode. You will find the chain.app under `chain/bin/Release/`
 
