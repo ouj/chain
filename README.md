@@ -27,7 +27,7 @@ I tried very hard to make the project portable. What I mean is you should just n
 Build
 =====
 ## Install Dependencies
-1. Xcode. Go to the app store and get Xcode. 
+1. Xcode. Go to the app store and get Xcode. If you are using Xcode 4.3, you might need to do the following `sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer`.
 2. [homebrew](http://mxcl.github.com/homebrew/). The easiest thing to do, Paste this at a shell prompt:
 ```
 /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
