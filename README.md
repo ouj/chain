@@ -36,11 +36,7 @@ Build
 
 ## Create xcode project and build
 1. Clone the project `git clone 'https://github.com/ouj/chain/'`
-2. Create xcode project
-```
-cd chain
-./cmake-xcode.sh
-```
+2. Create xcode project. `cd chain; ./cmake-xcode.sh`
 3. Build with Xcode. You will find the chain.app under `chain/bin/Release/`
 
 ## 
